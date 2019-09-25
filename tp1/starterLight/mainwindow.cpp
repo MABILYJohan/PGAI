@@ -114,6 +114,22 @@ float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
     return aireB;
 }
 
+void MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
+{
+    VertexHandle vh = _mesh->vertex_handle(vertexID);
+
+    int cpt=0;
+    MyMesh::Point sommevNFace;
+    for (MyMesh::VertexFaceCWIter vf_it = _mesh->vf_cwiter(vh); vf_it.is_valid(); vf_it++)
+    {
+        cpt++;
+        FaceHandle fh = *vf_it;
+        MyMesh::Point vNFace = _mesh->calc_face_normal(fh);
+        sommevNFace+=vNFace;
+    }
+    sommevNFace /= cpt;
+}
+
 void MainWindow::H_Curv(MyMesh* _mesh)
 {
     /* **** à compléter ! **** */
@@ -231,6 +247,8 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     qDebug() << "Angle au sommet 1 sur la face 0 :" << angleEE(&mesh, 1, 0);
     qDebug() << "Angle au sommet 3 sur la face 1 :" << angleEE(&mesh, 3, 1);
+
+    //qDebug() << "normale du sommet 1" << normale_sommet(mesh, 1) << endl;
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
