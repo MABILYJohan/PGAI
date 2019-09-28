@@ -7,26 +7,20 @@
 #include <cmath>
 #include <QVector3D>
 
-/* **** début de la partie à compléter **** */
+
 float MainWindow::faceArea(MyMesh* _mesh, int faceID)
 {
-    /* **** à compléter ! **** */
+    FaceHandle face_h = FaceHandle(faceID);
 
-    FaceHandle fh = _mesh->face_handle(faceID);
-
-    std::vector<VertexHandle> vh;
-    for (MyMesh::FaceVertexCWIter fv_it = _mesh->fv_cwiter(fh); fv_it.is_valid(); fv_it++)
-    {
-        vh.push_back(*fv_it);
+    // on enregistre les points de la face dans un QVector
+    QVector<MyMesh::Point> points;
+    for(MyMesh::FaceVertexIter curVer = _mesh->fv_iter(face_h); curVer.is_valid(); curVer++) {
+        VertexHandle vertex_h = *curVer;
+        points.push_back(_mesh->point(vertex_h));
     }
-    MyMesh::Point A = _mesh->point (vh[0]);
-    MyMesh::Point B = _mesh->point (vh[1]);
-    MyMesh::Point C = _mesh->point (vh[2]);
 
-    float a = ((B-A) | (C-A)) / 2.f;
-    return a;
+    return norm((points[1] - points[0]) % (points[2] - points[0])) / 2;
 }
-
 
 float MainWindow::angleFF(MyMesh* _mesh, int faceID0, int faceID1, int vertID0, int vertID1)
 {
@@ -124,9 +118,22 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         float aire = faceArea(_mesh, fh.idx());
         if (aire<=min)  min = aire;
         if (aire>=max)  max = aire;
+        if (aire <0) {
+            _mesh->set_color(fh, MyMesh::Color(0, 255, 0));
+            /*
+            for (MyMesh::FaceVertexCWIter fv_it = _mesh->fv_cwiter(fh); fv_it.is_valid(); fv_it++)
+            {
+                VertexHandle vh = *fv_it;
+                _mesh->data(vh).thickness = 20;
+                _mesh->set_color(vh, MyMesh::Color(0, 255, 0));
+                qDebug() << "aire = " << aire <<endl;
+            }
+            */
+        }
     }
     qDebug() << "max aire = " << max;
     qDebug() << "min aire = " << min << endl;
+    displayMesh(_mesh);
 }
 
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
@@ -262,6 +269,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
     MyMesh::Point p = normale_sommet(&mesh, sommet);
     qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
+
     frequence_aire_triangles(&mesh);
 }
 
