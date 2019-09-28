@@ -7,6 +7,7 @@
 #include <cmath>
 #include <QVector3D>
 
+using namespace std;
 
 float MainWindow::faceArea(MyMesh* _mesh, int faceID)
 {
@@ -108,32 +109,76 @@ float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
     return aireB;
 }
 
+float MainWindow::aire_maillage(MyMesh *_mesh)
+{
+    float aireTotale=0.f;
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        aireTotale += faceArea(_mesh, fh.idx());
+    }
+    return aireTotale;
+}
+
 void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
 {
-    float min=DBL_MAX;
-    float max = 0.f;
+    bool flagColor=true;
+    float minAire=DBL_MAX;
+    float maxAire = 0.f;
+    FaceHandle faceMin, faceMax;
+    vector<int> nbTriangles (10, 0); // 10 cases par tranches de 10%
+
+    // MIN ET MAX
     for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
     {
         FaceHandle fh = *f_it;
         float aire = faceArea(_mesh, fh.idx());
-        if (aire<=min)  min = aire;
-        if (aire>=max)  max = aire;
-        if (aire <0) {
-            _mesh->set_color(fh, MyMesh::Color(0, 255, 0));
-            /*
-            for (MyMesh::FaceVertexCWIter fv_it = _mesh->fv_cwiter(fh); fv_it.is_valid(); fv_it++)
-            {
-                VertexHandle vh = *fv_it;
-                _mesh->data(vh).thickness = 20;
-                _mesh->set_color(vh, MyMesh::Color(0, 255, 0));
-                qDebug() << "aire = " << aire <<endl;
-            }
-            */
+        if (aire<=minAire) {
+            minAire = aire;
+            faceMin = fh;
+        }
+        if (aire>=maxAire) {
+            maxAire = aire;
+            faceMax = fh;
         }
     }
-    qDebug() << "max aire = " << max;
-    qDebug() << "min aire = " << min << endl;
-    displayMesh(_mesh);
+    qDebug() << "max aire = " << maxAire;
+    qDebug() << "min aire = " << minAire << endl;
+
+    // FREQUENCE TRIANGLE
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        float aire = faceArea(_mesh, fh.idx());
+
+        float intervInf, intervSup;
+        for (float i=0.f; i<nbTriangles.size(); i+=1.f)
+        {
+            if (i==0.f)   intervInf=minAire;
+            else        intervInf = minAire + (maxAire-minAire)*(i*10.f)/100.f;
+            intervSup = minAire + (maxAire-minAire)*(i+1.f)*10.f/100.f;
+
+            if (aire>intervInf && aire<=intervSup) {
+                nbTriangles[i]+=1;
+                if (flagColor) {
+                    _mesh->set_color(fh, MyMesh::Color(0, (10-i)*(255/10), i*(255/10)));
+                }
+            }
+        }
+    }
+
+    // AFFICHAGE
+    for (int i=0; i<nbTriangles.size(); i++)
+    {
+        qDebug() << " triangles entre " << i*10 << " et " << (i+1)*10 << "% de l'aire max = "
+                 << nbTriangles[i] ;
+    }
+    qDebug() << _mesh->n_faces() << " triangles au total";
+    if (flagColor) {
+        _mesh->set_color(faceMin, MyMesh::Color(255, 200, 255));
+        _mesh->set_color(faceMax, MyMesh::Color(0, 0, 50));
+        displayMesh(_mesh);
+    }
 }
 
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
@@ -142,6 +187,7 @@ MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
     _mesh->request_face_normals();
     _mesh->request_vertex_normals();
     MyMesh::Point p = _mesh->calc_vertex_normal(vh);
+    mesh.release_vertex_normals();
     return p;
 }
 
@@ -263,14 +309,18 @@ void MainWindow::on_pushButton_angleArea_clicked()
     qDebug() << "Angle au sommet 1 sur la face 0 :" << angleEE(&mesh, 1, 0);
     qDebug() << "Angle au sommet 3 sur la face 1 :" << angleEE(&mesh, 3, 1);
 
-    //qDebug() << "normale du sommet 1" << normale_sommet(mesh, 1) << endl;
-
+    // TEST NORMALE SOMMET
     int sommet=1;
     MyMesh::Point p = normale_sommet(&mesh, sommet);
     qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
 
+    // TEST FREQUENCE AIRES
     frequence_aire_triangles(&mesh);
+
+    // TEST AIRE TOTALE
+    float aireTotale = aire_maillage(&mesh);
+    qDebug() << "aire totale" << aireTotale;
 }
 
 void MainWindow::on_pushButton_chargement_clicked()

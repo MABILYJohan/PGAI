@@ -49,6 +49,7 @@ public:
     // New
     MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
     void frequence_aire_triangles(MyMesh *_mesh);
+    float aire_maillage(MyMesh *_mesh);
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
