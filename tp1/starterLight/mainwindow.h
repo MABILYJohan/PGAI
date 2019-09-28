@@ -41,11 +41,14 @@ public:
     // les fonctions à compléter
     float faceArea(MyMesh* _mesh, int faceID);
     float aire_barycentrique(MyMesh* _mesh, int vertID);
-    MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
     float angleFF(MyMesh *_mesh, int faceID0, int faceID1, int vertID0, int vertID1);
     float angleEE(MyMesh* _mesh, int vertexID, int faceID);
     void H_Curv(MyMesh* _mesh);
     void K_Curv(MyMesh* _mesh);
+
+    // New
+    MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
+    void frequence_aire_triangles(MyMesh *_mesh);
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);

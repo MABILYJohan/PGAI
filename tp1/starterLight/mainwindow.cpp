@@ -114,6 +114,21 @@ float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
     return aireB;
 }
 
+void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
+{
+    float min=DBL_MAX;
+    float max = 0.f;
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        float aire = faceArea(_mesh, fh.idx());
+        if (aire<=min)  min = aire;
+        if (aire>=max)  max = aire;
+    }
+    qDebug() << "max aire = " << max;
+    qDebug() << "min aire = " << min << endl;
+}
+
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
 {
     VertexHandle vh = _mesh->vertex_handle(vertexID);
@@ -245,8 +260,9 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     int sommet=1;
     MyMesh::Point p = normale_sommet(&mesh, sommet);
-    qDebug() << "normale du sommet " << sommet
+    qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
+    frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
