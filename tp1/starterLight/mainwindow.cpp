@@ -199,7 +199,8 @@ MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
 
 void MainWindow::deviation_normales(MyMesh *_mesh)
 {
-    float a=0.f;
+    //qDebug() << "<" << __FUNCTION__ << ">";
+    float maxAngle = 0.f;
     for (MyMesh::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it)
     {
         VertexHandle vh = *v_it;
@@ -212,19 +213,23 @@ void MainWindow::deviation_normales(MyMesh *_mesh)
             FaceHandle fh = *vf_it;
             MyMesh::Point nf = _mesh->calc_face_normal(fh);
             nf.normalize();
-
-            a = acos( (normSommet | nf) );
-            angles.push_back(a);
+            maxAngle = acos( (normSommet | nf) );
+            angles.push_back(maxAngle);
         }
-        a = 0.f;
+        maxAngle = 0.f;
         for (unsigned i=0; i<angles.size(); i++)
         {
-            if (a < angles[i]) {
-                a = angles[i];
+            if (maxAngle <= angles[i]) {
+                maxAngle = angles[i];
             }
         }
-        qDebug() << "déviation max au sommet " << vh.idx() << " = " << a;
+        maxAngle = Utils::RadToDeg(maxAngle);
+        //qDebug() << "déviation max au sommet " << vh.idx() << " = " << maxAngle << "degrés";
+        _mesh->data(vh).thickness = 8;
+        _mesh->set_color(vh, MyMesh::Color(0, 180-maxAngle, 0));
     }
+    displayMesh(_mesh);
+    //qDebug() << "</" << __FUNCTION__ << ">";
 }
 
 void MainWindow::H_Curv(MyMesh* _mesh)
@@ -320,20 +325,19 @@ void MainWindow::on_pushButton_K_clicked()
     //displayMesh(&mesh, false); // true permet de passer en mode "carte de temperatures", avec une gestion automatique de la couleur (voir exemple)
 }
 
-/*
-    Cette fonction est à utiliser UNIQUEMENT avec le fichier testAngleArea.obj
-    Elle est appelée par le bouton "Test angles/aires"
-
-    Elle permet de vérifier les fonctions faceArea, angleFF et angleEE.
-    Elle doit afficher :
-
-    Aire de la face 0 : 2
-    Aire de la face 1 : 2
-    Angle entre les faces 0 et 1 : 1.5708
-    Angle entre les faces 1 et 0 : -1.5708
-    Angle au sommet 1 sur la face 0 : 0.785398
-*/
-
+/*-------------------------------------------------------------------------------
+ * Cette fonction est à utiliser UNIQUEMENT avec le fichier testAngleArea.obj
+ * Elle est appelée par le bouton "Test angles/aires"
+ *
+ * Elle permet de vérifier les fonctions faceArea, angleFF et angleEE.
+ * Elle doit afficher :
+ *
+ * Aire de la face 0 : 2
+ * Aire de la face 1 : 2
+ * Angle entre les faces 0 et 1 : 1.5708
+ * Angle entre les faces 1 et 0 : -1.5708
+ * Angle au sommet 1 sur la face 0 : 0.785398
+ *----------------------------------------------------------------------------*/
 void MainWindow::on_pushButton_angleArea_clicked()
 {
     qDebug() << "Aire de la face 0 :" << faceArea(&mesh, 0);
@@ -356,13 +360,8 @@ void MainWindow::on_pushButton_angleArea_clicked()
     float aireTotale = aire_maillage(&mesh);
     qDebug() << "aire totale" << aireTotale;
 
-
     // TEST DEVIATIONS NORMALES
     deviation_normales(&mesh);
-    VertexHandle vh = mesh.vertex_handle(0);
-    mesh.set_color(vh, MyMesh::Color(0, 255, 0));
-    mesh.data(vh).thickness = 10;
-    displayMesh(&mesh);
     */
 }
 
