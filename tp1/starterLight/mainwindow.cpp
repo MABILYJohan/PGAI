@@ -7,6 +7,7 @@
 #include <cmath>
 #include <QVector3D>
 
+
 using namespace std;
 
 float MainWindow::faceArea(MyMesh* _mesh, int faceID)
@@ -179,6 +180,7 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         _mesh->set_color(faceMax, MyMesh::Color(0, 0, 50));
         displayMesh(_mesh);
     }
+
 }
 
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
@@ -309,18 +311,20 @@ void MainWindow::on_pushButton_angleArea_clicked()
     qDebug() << "Angle au sommet 1 sur la face 0 :" << angleEE(&mesh, 1, 0);
     qDebug() << "Angle au sommet 3 sur la face 1 :" << angleEE(&mesh, 3, 1);
 
+    /*
     // TEST NORMALE SOMMET
     int sommet=1;
     MyMesh::Point p = normale_sommet(&mesh, sommet);
     qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
 
-    // TEST FREQUENCE AIRES
-    frequence_aire_triangles(&mesh);
-
     // TEST AIRE TOTALE
     float aireTotale = aire_maillage(&mesh);
     qDebug() << "aire totale" << aireTotale;
+    */
+
+    // TEST FREQUENCE AIRES
+    frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()

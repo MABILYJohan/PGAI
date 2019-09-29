@@ -6,6 +6,8 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -60,6 +62,7 @@ private slots:
     void on_pushButton_angleArea_clicked();
     void on_pushButton_H_clicked();
     void on_pushButton_K_clicked();
+
 
 private:
 
