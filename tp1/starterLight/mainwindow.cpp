@@ -376,10 +376,10 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     // TEST DEVIATIONS NORMALES
     deviation_normales(&mesh);
-    */
 
     // TEST FREQUENCE AIRE TRIANGLES
-    //frequence_aire_triangles(&mesh);
+    frequence_aire_triangles(&mesh);
+    */
 }
 
 void MainWindow::on_pushButton_chargement_clicked()

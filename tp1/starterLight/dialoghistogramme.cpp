@@ -27,29 +27,38 @@ DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees) :
     for (unsigned i=0; i<_donnees.size(); i++)
     {
         //sets[i] = new QBarSet(to_string(donnees[i]), nullptr);
-        sets[i] = new QBarSet("tmp");
-        //*sets[i] << 1;
-        //series->append(sets[i]);
+        char truc[20];
+        sprintf(truc, "%d-%d%c", i*10, (i+1)*10, '%');
+
+        sets[i] = new QBarSet(truc);
+        *sets[i] << donnees[i];
+        series->append(sets[i]);
     }
 
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("my machin cool");
+    chart->setTitle("histogramme");
 
+
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
     /*
+    QBarCategoryAxis *axisY = new QBarCategoryAxis();
+    axisY->setMin("0");
+    axisY->setMax("100");
     QStringList categories;
     for (unsigned i=0; i<_donnees.size(); i++)
     {
         char truc[20];
-        sprintf(truc, "%d ", _donnees[i]);
+        sprintf(truc, "%d ", i*10);
         categories << truc;
     }
+    axisY->append(categories);
     */
 
-    QBarCategoryAxis *axis = new QBarCategoryAxis();
-    //axis->append(categories);
+
     chart->createDefaultAxes();
-    chart->setAxisX(axis, series);
+    chart->setAxisX(axisX, series);
+    //chart->setAxisY(axisY);
 
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
