@@ -121,9 +121,20 @@ float MainWindow::aire_maillage(MyMesh *_mesh)
     return aireTotale;
 }
 
+void MainWindow::test_histogramme(MyMesh *_mesh, vector<int> v)
+{
+    DialogHistogramme dlh(nullptr, v);
+    if (dlh.exec()) {
+        ;
+    }
+    else {
+        ;
+    }
+}
+
 void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
 {
-    bool flagColor=true;
+    bool flagColor=false;
     float minAire=DBL_MAX;
     float maxAire = 0.f;
     FaceHandle faceMin, faceMax;
@@ -181,6 +192,7 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         displayMesh(_mesh);
     }
 
+    test_histogramme(_mesh, nbTriangles);
 }
 
 /*-------------------------------------------------------------------------
@@ -325,6 +337,8 @@ void MainWindow::on_pushButton_K_clicked()
     //displayMesh(&mesh, false); // true permet de passer en mode "carte de temperatures", avec une gestion automatique de la couleur (voir exemple)
 }
 
+
+
 /*-------------------------------------------------------------------------------
  * Cette fonction est à utiliser UNIQUEMENT avec le fichier testAngleArea.obj
  * Elle est appelée par le bouton "Test angles/aires"
@@ -363,6 +377,9 @@ void MainWindow::on_pushButton_angleArea_clicked()
     // TEST DEVIATIONS NORMALES
     deviation_normales(&mesh);
     */
+
+    // TEST FREQUENCE AIRE TRIANGLES
+    //frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()

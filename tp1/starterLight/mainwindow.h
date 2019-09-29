@@ -6,7 +6,9 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
+
 #include "utils.h"
+#include "dialoghistogramme.h"
 
 namespace Ui {
 class MainWindow;
@@ -54,6 +56,7 @@ public:
     void frequence_aire_triangles(MyMesh *_mesh);
     float aire_maillage(MyMesh *_mesh);
     void deviation_normales(MyMesh *_mesh);
+    void test_histogramme(MyMesh *_mesh, vector<int> v);
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
