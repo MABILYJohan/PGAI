@@ -183,6 +183,10 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
 
 }
 
+/*-------------------------------------------------------------------------
+ * Renvoi la normale du sommet d'indice @vertexID
+ * (pas normalisée)
+ * ----------------------------------------------------------------------*/
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
 {
     VertexHandle vh = _mesh->vertex_handle(vertexID);
@@ -191,6 +195,36 @@ MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
     MyMesh::Point p = _mesh->calc_vertex_normal(vh);
     mesh.release_vertex_normals();
     return p;
+}
+
+void MainWindow::deviation_normales(MyMesh *_mesh)
+{
+    float a=0.f;
+    for (MyMesh::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it)
+    {
+        VertexHandle vh = *v_it;
+        MyMesh::Point normSommet = normale_sommet(_mesh, vh.idx());
+        normSommet.normalize();
+
+        vector<float> angles;
+        for (MyMesh::VertexFaceIter vf_it = _mesh->vf_iter(vh); vf_it.is_valid(); vf_it++)
+        {
+            FaceHandle fh = *vf_it;
+            MyMesh::Point nf = _mesh->calc_face_normal(fh);
+            nf.normalize();
+
+            a = acos( (normSommet | nf) );
+            angles.push_back(a);
+        }
+        a = 0.f;
+        for (unsigned i=0; i<angles.size(); i++)
+        {
+            if (a < angles[i]) {
+                a = angles[i];
+            }
+        }
+        qDebug() << "déviation max au sommet " << vh.idx() << " = " << a;
+    }
 }
 
 void MainWindow::H_Curv(MyMesh* _mesh)
@@ -321,10 +355,15 @@ void MainWindow::on_pushButton_angleArea_clicked()
     // TEST AIRE TOTALE
     float aireTotale = aire_maillage(&mesh);
     qDebug() << "aire totale" << aireTotale;
-    */
 
-    // TEST FREQUENCE AIRES
-    frequence_aire_triangles(&mesh);
+
+    // TEST DEVIATIONS NORMALES
+    deviation_normales(&mesh);
+    VertexHandle vh = mesh.vertex_handle(0);
+    mesh.set_color(vh, MyMesh::Color(0, 255, 0));
+    mesh.data(vh).thickness = 10;
+    displayMesh(&mesh);
+    */
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
