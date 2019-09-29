@@ -624,7 +624,8 @@ mainwindow.o: ../starterLight/mainwindow.cpp ../starterLight/mainwindow.h \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/PolyMeshT.cc \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/LoopSchemeMaskT.hh \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/TriMeshT.cc \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		../starterLight/meshviewerwidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../starterLight/mainwindow.cpp
 
 meshviewerwidget.o: ../starterLight/meshviewerwidget.cpp ../starterLight/meshviewerwidget.h \

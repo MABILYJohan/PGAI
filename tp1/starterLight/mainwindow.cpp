@@ -7,26 +7,22 @@
 #include <cmath>
 #include <QVector3D>
 
-/* **** début de la partie à compléter **** */
+
+using namespace std;
+
 float MainWindow::faceArea(MyMesh* _mesh, int faceID)
 {
-    /* **** à compléter ! **** */
+    FaceHandle face_h = FaceHandle(faceID);
 
-    FaceHandle fh = _mesh->face_handle(faceID);
-
-    std::vector<VertexHandle> vh;
-    for (MyMesh::FaceVertexCWIter fv_it = _mesh->fv_cwiter(fh); fv_it.is_valid(); fv_it++)
-    {
-        vh.push_back(*fv_it);
+    // on enregistre les points de la face dans un QVector
+    QVector<MyMesh::Point> points;
+    for(MyMesh::FaceVertexIter curVer = _mesh->fv_iter(face_h); curVer.is_valid(); curVer++) {
+        VertexHandle vertex_h = *curVer;
+        points.push_back(_mesh->point(vertex_h));
     }
-    MyMesh::Point A = _mesh->point (vh[0]);
-    MyMesh::Point B = _mesh->point (vh[1]);
-    MyMesh::Point C = _mesh->point (vh[2]);
 
-    float a = ((B-A) | (C-A)) / 2.f;
-    return a;
+    return norm((points[1] - points[0]) % (points[2] - points[0])) / 2;
 }
-
 
 float MainWindow::angleFF(MyMesh* _mesh, int faceID0, int faceID1, int vertID0, int vertID1)
 {
@@ -114,12 +110,86 @@ float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
     return aireB;
 }
 
+float MainWindow::aire_maillage(MyMesh *_mesh)
+{
+    float aireTotale=0.f;
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        aireTotale += faceArea(_mesh, fh.idx());
+    }
+    return aireTotale;
+}
+
+void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
+{
+    bool flagColor=true;
+    float minAire=DBL_MAX;
+    float maxAire = 0.f;
+    FaceHandle faceMin, faceMax;
+    vector<int> nbTriangles (10, 0); // 10 cases par tranches de 10%
+
+    // MIN ET MAX
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        float aire = faceArea(_mesh, fh.idx());
+        if (aire<=minAire) {
+            minAire = aire;
+            faceMin = fh;
+        }
+        if (aire>=maxAire) {
+            maxAire = aire;
+            faceMax = fh;
+        }
+    }
+    qDebug() << "max aire = " << maxAire;
+    qDebug() << "min aire = " << minAire << endl;
+
+    // FREQUENCE TRIANGLE
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        FaceHandle fh = *f_it;
+        float aire = faceArea(_mesh, fh.idx());
+
+        float intervInf, intervSup;
+        for (float i=0.f; i<nbTriangles.size(); i+=1.f)
+        {
+            if (i==0.f)   intervInf=minAire;
+            else        intervInf = minAire + (maxAire-minAire)*(i*10.f)/100.f;
+            intervSup = minAire + (maxAire-minAire)*(i+1.f)*10.f/100.f;
+
+            if (aire>intervInf && aire<=intervSup) {
+                nbTriangles[i]+=1;
+                if (flagColor) {
+                    _mesh->set_color(fh, MyMesh::Color(0, (10-i)*(255/10), i*(255/10)));
+                }
+            }
+        }
+    }
+
+    // AFFICHAGE
+    for (int i=0; i<nbTriangles.size(); i++)
+    {
+        qDebug() << " triangles entre " << i*10 << " et " << (i+1)*10 << "% de l'aire max = "
+                 << nbTriangles[i] ;
+    }
+    qDebug() << _mesh->n_faces() << " triangles au total";
+    if (flagColor) {
+        _mesh->set_color(faceMin, MyMesh::Color(255, 200, 255));
+        _mesh->set_color(faceMax, MyMesh::Color(0, 0, 50));
+        displayMesh(_mesh);
+    }
+
+}
+
 MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
 {
     VertexHandle vh = _mesh->vertex_handle(vertexID);
     _mesh->request_face_normals();
     _mesh->request_vertex_normals();
     MyMesh::Point p = _mesh->calc_vertex_normal(vh);
+    mesh.release_vertex_normals();
     return p;
 }
 
@@ -241,12 +311,20 @@ void MainWindow::on_pushButton_angleArea_clicked()
     qDebug() << "Angle au sommet 1 sur la face 0 :" << angleEE(&mesh, 1, 0);
     qDebug() << "Angle au sommet 3 sur la face 1 :" << angleEE(&mesh, 3, 1);
 
-    //qDebug() << "normale du sommet 1" << normale_sommet(mesh, 1) << endl;
-
+    /*
+    // TEST NORMALE SOMMET
     int sommet=1;
     MyMesh::Point p = normale_sommet(&mesh, sommet);
-    qDebug() << "normale du sommet " << sommet
+    qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
+
+    // TEST AIRE TOTALE
+    float aireTotale = aire_maillage(&mesh);
+    qDebug() << "aire totale" << aireTotale;
+    */
+
+    // TEST FREQUENCE AIRES
+    frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
@@ -503,6 +581,9 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
     float Ymax = -5000;
     float Zmax = -5000;
     MyMesh::Point tmpBary;
+    tmpBary[0] = 0;
+    tmpBary[1] = 0;
+    tmpBary[2] = 0;
     int valence = 0;
     // calcul des points aux extremes du mesh
     for (MyMesh::VertexIter vit = _mesh->vertices_begin(); vit != _mesh->vertices_end(); ++vit)
