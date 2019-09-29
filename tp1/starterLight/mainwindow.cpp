@@ -487,3 +487,80 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    Bounding_box(&mesh);
+}
+
+// exemple pour construire un mesh face par face
+void MainWindow::Bounding_box(MyMesh* _mesh)
+{
+    float Xmin = 5000;
+    float Ymin = 5000;
+    float Zmin = 5000;
+    float Xmax = -5000;
+    float Ymax = -5000;
+    float Zmax = -5000;
+    MyMesh::Point tmpBary;
+    int valence = 0;
+    // calcul des points aux extremes du mesh
+    for (MyMesh::VertexIter vit = _mesh->vertices_begin(); vit != _mesh->vertices_end(); ++vit)
+    {
+        MyMesh::VertexHandle vh = (*vit);
+        MyMesh::Point point = _mesh->point (vh);
+        tmpBary[0] += point[0];
+        tmpBary[1] += point[1];
+        tmpBary[2] += point[2];
+        valence ++;
+        if(point[0] < Xmin)
+            Xmin = point[0];
+        if(point[1] < Ymin)
+            Ymin = point[1];
+        if(point[2] < Zmin)
+            Zmin = point[2];
+        if(point[0] > Xmax)
+            Xmax = point[0];
+        if(point[1] > Ymax)
+            Ymax = point[1];
+        if(point[2] > Zmax)
+            Zmax = point[2];
+    }
+    tmpBary[0] /= valence;
+    tmpBary[1] /= valence;
+    tmpBary[2] /= valence;
+
+    qDebug() << "Barycentre : x :" << tmpBary[0] << " y : " << tmpBary[1] << " z : " << tmpBary[2];
+    qDebug() << "Xmin : " << Xmin << " Ymin : " << Ymin << " Zmin : " << Zmin;
+    qDebug() << "Xmax : " << Xmax << " Ymax : " << Ymax << " Zmax : " << Zmax << endl;
+
+    //on recupere le mesh global auquel nous ajouterons les sommets de la bound box
+    MyMesh *mesh = _mesh;
+    MyMesh::VertexHandle sommets[8];
+    MyMesh::VertexHandle barycentre;
+
+    sommets[0] = mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmin));
+    sommets[1] = mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmax));
+    sommets[2] = mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmin));
+    sommets[3] = mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmax));
+    sommets[4] = mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmin));
+    sommets[5] = mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmax));
+    sommets[6] = mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmin));
+    sommets[7] = mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmax));
+    barycentre = mesh->add_vertex(tmpBary);
+
+    // initialisation des couleurs et épaisseurs (sommets et arêtes) du mesh
+    resetAllColorsAndThickness(mesh);
+
+    //on agrandis les points de la boundbox et on les met en rouge pour qu'ils soient plus visiblent
+    for(int i = 0 ; i <  8; i++){
+        _mesh->data(sommets[i]).thickness = 3;
+        _mesh->set_color(sommets[i], MyMesh::Color(255, 0, 0));
+    }
+    _mesh->data(barycentre).thickness = 4;
+    _mesh->set_color(barycentre, MyMesh::Color(0, 255, 0));
+
+    // on affiche le maillage
+    displayMesh(mesh);
+
+}

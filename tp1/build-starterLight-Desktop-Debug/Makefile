@@ -35,10 +35,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = starterLight1.0.0
-DISTDIR = /home/djohlan/Bureau/PGAI/tp1/build-starterLight-Desktop-Debug/.tmp/starterLight1.0.0
+DISTDIR = /home/brok/Bureau/PGAI/PGAI/tp1/build-starterLight-Desktop-Debug/.tmp/starterLight1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) -lglut -lGLU -L/home/djohlan/Bureau/PGAI/tp1/starterLight/../OpenMesh/liblinux/ -lOpenMeshCore -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lglut -lGLU -L/home/brok/Bureau/PGAI/PGAI/tp1/starterLight/../OpenMesh/liblinux/ -lOpenMeshCore -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -435,7 +435,7 @@ moc_mainwindow.cpp: ../OpenMesh/inc/OpenMesh/Core/IO/MeshIO.hh \
 		../starterLight/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/djohlan/Bureau/PGAI/tp1/starterLight -I/home/djohlan/Bureau/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/mainwindow.h -o moc_mainwindow.cpp
 
 moc_meshviewerwidget.cpp: ../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT.hh \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/Vector11T.hh \
@@ -446,7 +446,7 @@ moc_meshviewerwidget.cpp: ../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT.hh \
 		../starterLight/meshviewerwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/djohlan/Bureau/PGAI/tp1/starterLight -I/home/djohlan/Bureau/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/meshviewerwidget.h -o moc_meshviewerwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/meshviewerwidget.h -o moc_meshviewerwidget.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

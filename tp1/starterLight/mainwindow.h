@@ -46,7 +46,7 @@ public:
     float angleEE(MyMesh* _mesh, int vertexID, int faceID);
     void H_Curv(MyMesh* _mesh);
     void K_Curv(MyMesh* _mesh);
-
+    void Bounding_box(MyMesh* _mesh);
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
@@ -56,6 +56,8 @@ private slots:
     void on_pushButton_angleArea_clicked();
     void on_pushButton_H_clicked();
     void on_pushButton_K_clicked();
+
+    void on_pushButton_clicked();
 
 private:
 
