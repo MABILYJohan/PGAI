@@ -14,7 +14,7 @@ QT_CHARTS_USE_NAMESPACE
 
 using namespace std;
 
-DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees) :
+DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees, vector<char*> labels) :
     QDialog(parent)
 {
     setupUi(this);
@@ -26,11 +26,7 @@ DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees) :
 
     for (unsigned i=0; i<_donnees.size(); i++)
     {
-        //sets[i] = new QBarSet(to_string(donnees[i]), nullptr);
-        char truc[20];
-        sprintf(truc, "%d-%d%c", i*10, (i+1)*10, '%');
-
-        sets[i] = new QBarSet(truc);
+        sets[i] = new QBarSet(labels[i]);
         *sets[i] << donnees[i];
         series->append(sets[i]);
     }
@@ -55,7 +51,6 @@ DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees) :
     axisY->append(categories);
     */
 
-
     chart->createDefaultAxes();
     chart->setAxisX(axisX, series);
     //chart->setAxisY(axisY);
@@ -68,7 +63,3 @@ DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees) :
 
 }
 
-void DialogHistogramme::display_histo()
-{
-    ;
-}

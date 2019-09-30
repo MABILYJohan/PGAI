@@ -121,9 +121,9 @@ float MainWindow::aire_maillage(MyMesh *_mesh)
     return aireTotale;
 }
 
-void MainWindow::test_histogramme(MyMesh *_mesh, vector<int> v)
+void MainWindow::test_histogramme(MyMesh *_mesh, vector<int> v, vector<char*> labels)
 {
-    DialogHistogramme dlh(nullptr, v);
+    DialogHistogramme dlh(nullptr, v, labels);
     if (dlh.exec()) {
         ;
     }
@@ -192,7 +192,15 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         displayMesh(_mesh);
     }
 
-    test_histogramme(_mesh, nbTriangles);
+    vector<char*> labels(10, "a");
+    for (int i=0; i<(int)nbTriangles.size(); i++)
+    {
+        char truc[20];
+        sprintf(truc, "%d-%d%c", i*10, (i+1)*10, '%');
+        labels[i] = truc;
+        //qDebug() << "labels[" << i << "] = " << labels[i] ;
+    }
+    test_histogramme(_mesh, nbTriangles, labels);
 }
 
 /*-------------------------------------------------------------------------
@@ -377,9 +385,9 @@ void MainWindow::on_pushButton_angleArea_clicked()
     // TEST DEVIATIONS NORMALES
     deviation_normales(&mesh);
 
-    // TEST FREQUENCE AIRE TRIANGLES
-    frequence_aire_triangles(&mesh);
     */
+    // TEST FREQUENCE AIRE TRIANGLES
+    //frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
