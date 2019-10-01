@@ -386,7 +386,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     */
     // TEST FREQUENCE AIRE TRIANGLES
-    frequence_aire_triangles(&mesh);
+    //frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
