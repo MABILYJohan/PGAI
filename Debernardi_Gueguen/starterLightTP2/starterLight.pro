@@ -6,11 +6,6 @@
 
 QT       += core gui
 QT       += opengl
-# Pour QtCharts
-QT       += charts
-
-target.path = $$[QT_INSTALL_EXAMPLES]/charts/barchart
-INSTALLS += target
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -46,19 +41,13 @@ macx: {
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    meshviewerwidget.cpp \
-    utils.cpp \
-    dialoghistogramme.cpp
+    meshviewerwidget.cpp
 
 HEADERS += \
         mainwindow.h \
-    meshviewerwidget.h \
-    utils.h \
-    dialoghistogramme.h
+    meshviewerwidget.h
 
 FORMS += \
-        mainwindow.ui \
-    dialoghistogramme.ui
+        mainwindow.ui
 
-DISTFILES +=
 
