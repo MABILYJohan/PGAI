@@ -6,13 +6,6 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
-
-#include "utils.h"
-#include "dialoghistogramme.h"
-
-#include <vector>
-using namespace std;
-
 namespace Ui {
 class MainWindow;
 }
@@ -30,7 +23,7 @@ struct MyTraits : public OpenMesh::DefaultTraits
     FaceAttributes( OpenMesh::Attributes::Normal | OpenMesh::Attributes::Color );
     EdgeAttributes( OpenMesh::Attributes::Color );
     // vertex thickness
-    VertexTraits{float thickness; float value;};
+    VertexTraits{float thickness;};
     // edge thickness
     EdgeTraits{float thickness;};
 };
@@ -41,46 +34,32 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-
+    void changeColor();
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    // les fonctions à compléter
-    float faceArea(MyMesh* _mesh, int faceID);
-    float aire_barycentrique(MyMesh* _mesh, int vertID);
-    float angleFF(MyMesh *_mesh, int faceID0, int faceID1, int vertID0, int vertID1);
-    float angleEE(MyMesh* _mesh, int vertexID, int faceID);
-    void H_Curv(MyMesh* _mesh);
-    void K_Curv(MyMesh* _mesh);
-    void Bounding_box(MyMesh* _mesh);
-    void delete_bound(MyMesh* _mesh);
-    // New
-    MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
-    void frequence_aire_triangles(MyMesh *_mesh);
-    float aire_maillage(MyMesh *_mesh);
-    void deviation_normales(MyMesh *_mesh);
-    void histogramme_pourcentages(MyMesh *_mesh, vector<int> v, int indices);
-    void angles_diedres(MyMesh *_mesh);
+    // la fonction à compléter
+    void showParts(MyMesh* _mesh);
 
-    void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
+    void displayMesh(MyMesh *_mesh);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
+    void parcourProf(MyMesh *_mesh, int vertex);
 private slots:
 
     void on_pushButton_chargement_clicked();
-    void on_pushButton_angleArea_clicked();
-    void on_pushButton_H_clicked();
-    void on_pushButton_K_clicked();
 
     void on_pushButton_clicked();
+
 private:
-
+    MyMesh::Color color = MyMesh::Color(255,0,0);
     bool modevoisinage;
-    MyMesh::VertexHandle sommets[8];
-    MyMesh::VertexHandle barycentre;
+    QVector<int> faceMarked;
+    QVector<int> vertexGrp;
     MyMesh mesh;
-
+    MyMesh::Color colorRand;
     int vertexSelection;
+
     int edgeSelection;
     int faceSelection;
 

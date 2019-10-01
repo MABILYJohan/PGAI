@@ -5,18 +5,13 @@
 #include <QMainWindow>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
-
-
-#include "utils.h"
-#include "dialoghistogramme.h"
-
-#include <vector>
-using namespace std;
+#include <queue>
 
 namespace Ui {
 class MainWindow;
 }
 
+using namespace std;
 using namespace OpenMesh;
 using namespace OpenMesh::Attributes;
 
@@ -30,7 +25,7 @@ struct MyTraits : public OpenMesh::DefaultTraits
     FaceAttributes( OpenMesh::Attributes::Normal | OpenMesh::Attributes::Color );
     EdgeAttributes( OpenMesh::Attributes::Color );
     // vertex thickness
-    VertexTraits{float thickness; float value;};
+    VertexTraits{float thickness;};
     // edge thickness
     EdgeTraits{float thickness;};
 };
@@ -41,43 +36,41 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    // les fonctions à compléter
-    float faceArea(MyMesh* _mesh, int faceID);
-    float aire_barycentrique(MyMesh* _mesh, int vertID);
-    float angleFF(MyMesh *_mesh, int faceID0, int faceID1, int vertID0, int vertID1);
-    float angleEE(MyMesh* _mesh, int vertexID, int faceID);
-    void H_Curv(MyMesh* _mesh);
-    void K_Curv(MyMesh* _mesh);
-    void Bounding_box(MyMesh* _mesh);
-    void delete_bound(MyMesh* _mesh);
-    // New
-    MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
-    void frequence_aire_triangles(MyMesh *_mesh);
-    float aire_maillage(MyMesh *_mesh);
-    void deviation_normales(MyMesh *_mesh);
-    void histogramme_pourcentages(MyMesh *_mesh, vector<int> v, int indices);
-    void angles_diedres(MyMesh *_mesh);
+    // fonction perso
+    void colorVertex(MyMesh* _mesh, int vertex, MyMesh::Color color, int thickness=8);
+    int findMinDistance(MyMesh* _mesh, float* distances, bool* marked);
+    int findEdge(MyMesh* _mesh, int source, int destination);
 
-    void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
+    // les 4 fonctions à compléter
+    void showSelections(MyMesh* _mesh);
+    void showSelectionsNeighborhood(MyMesh* _mesh);
+    void showPath(MyMesh* _mesh, int v1, int v2);
+    void showPath2(MyMesh* _mesh, int v1, int v2);
+    void showBorder(MyMesh* _mesh);
+
+    void displayMesh(MyMesh *_mesh);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
 private slots:
 
     void on_pushButton_chargement_clicked();
-    void on_pushButton_angleArea_clicked();
-    void on_pushButton_H_clicked();
-    void on_pushButton_K_clicked();
+    void on_pushButton_vertexMoins_clicked();
+    void on_pushButton_vertexPlus_clicked();
+    void on_pushButton_edgeMoins_clicked();
+    void on_pushButton_edgePlus_clicked();
+    void on_pushButton_faceMoins_clicked();
+    void on_pushButton_facePlus_clicked();
+    void on_pushButton_afficherChemin_clicked();
+    void on_pushButton_voisinage_clicked();
+    void on_pushButton_bordure_clicked();
 
-    void on_pushButton_clicked();
 private:
 
     bool modevoisinage;
-    MyMesh::VertexHandle sommets[8];
-    MyMesh::VertexHandle barycentre;
+
     MyMesh mesh;
 
     int vertexSelection;
