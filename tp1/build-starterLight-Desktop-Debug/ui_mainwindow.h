@@ -32,7 +32,6 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QHBoxLayout *horizontalLayout;
-    MeshViewerWidget *displayWidget;
     QWidget *widget_2;
     QVBoxLayout *verticalLayout;
     QPushButton *pushButton_chargement;
@@ -41,6 +40,7 @@ public:
     QPushButton *pushButton;
     QSpacerItem *verticalSpacer;
     QPushButton *pushButton_angleArea;
+    MeshViewerWidget *displayWidget;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,11 +56,8 @@ public:
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        displayWidget = new MeshViewerWidget(centralWidget);
-        displayWidget->setObjectName(QStringLiteral("displayWidget"));
-        widget_2 = new QWidget(displayWidget);
+        widget_2 = new QWidget(centralWidget);
         widget_2->setObjectName(QStringLiteral("widget_2"));
-        widget_2->setGeometry(QRect(0, 10, 206, 329));
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(150);
         sizePolicy.setVerticalStretch(0);
@@ -102,6 +99,16 @@ public:
 
         verticalLayout->addWidget(pushButton_angleArea);
 
+
+        horizontalLayout->addWidget(widget_2);
+
+        displayWidget = new MeshViewerWidget(centralWidget);
+        displayWidget->setObjectName(QStringLiteral("displayWidget"));
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(displayWidget->sizePolicy().hasHeightForWidth());
+        displayWidget->setSizePolicy(sizePolicy1);
 
         horizontalLayout->addWidget(displayWidget);
 

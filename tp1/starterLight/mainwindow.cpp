@@ -386,7 +386,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     */
     // TEST FREQUENCE AIRE TRIANGLES
-    //frequence_aire_triangles(&mesh);
+    frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
@@ -680,7 +680,7 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
 
     qDebug() << "Barycentre : x :" << tmpBary[0] << " y : " << tmpBary[1] << " z : " << tmpBary[2];
     qDebug() << "Xmin : " << Xmin << " Ymin : " << Ymin << " Zmin : " << Zmin;
-    qDebug() << "Xmax : " << Xmax << " Ymax : " << Ymax << " Zmax : " << Zmax << endl;
+    qDebug() << "Xmax : " << Xmax << " Ymax : " << Ymax << " Zmax : " << Zmax;
 
     //on recupere le mesh global auquel nous ajouterons les sommets de la bound box
     MyMesh *mesh = _mesh;
@@ -694,6 +694,8 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
     sommets[6] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmin));
     sommets[7] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmax));
     barycentre = _mesh->add_vertex(tmpBary);
+
+    qDebug () << "Rayon de la sphere englobante : " << norm(_mesh->point(sommets[0]) - _mesh->point(barycentre)) << endl;
 
     _mesh->update_normals();
 

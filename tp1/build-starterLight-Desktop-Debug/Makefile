@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../starterLight -I. -I../OpenMesh/inc -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I../starterLight -I. -I../OpenMesh/inc -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtCharts -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = starterLight1.0.0
 DISTDIR = /home/brok/Bureau/PGAI/PGAI/tp1/build-starterLight-Desktop-Debug/.tmp/starterLight1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) -lglut -lGLU -L/home/brok/Bureau/PGAI/PGAI/tp1/starterLight/../OpenMesh/liblinux/ -lOpenMeshCore -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lglut -lGLU -L/home/brok/Bureau/PGAI/PGAI/tp1/starterLight/../OpenMesh/liblinux/ -lOpenMeshCore -lQt5OpenGL -lQt5Charts -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,13 +52,19 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../starterLight/main.cpp \
 		../starterLight/mainwindow.cpp \
-		../starterLight/meshviewerwidget.cpp moc_mainwindow.cpp \
-		moc_meshviewerwidget.cpp
+		../starterLight/meshviewerwidget.cpp \
+		../starterLight/utils.cpp \
+		../starterLight/dialoghistogramme.cpp moc_mainwindow.cpp \
+		moc_meshviewerwidget.cpp \
+		moc_dialoghistogramme.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		meshviewerwidget.o \
+		utils.o \
+		dialoghistogramme.o \
 		moc_mainwindow.o \
-		moc_meshviewerwidget.o
+		moc_meshviewerwidget.o \
+		moc_dialoghistogramme.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -70,6 +76,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri \
@@ -113,6 +120,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		../starterLight/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -133,9 +141,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../starterLight/starterLight.pro ../starterLight/mainwindow.h \
-		../starterLight/meshviewerwidget.h ../starterLight/main.cpp \
+		../starterLight/meshviewerwidget.h \
+		../starterLight/utils.h \
+		../starterLight/dialoghistogramme.h ../starterLight/main.cpp \
 		../starterLight/mainwindow.cpp \
-		../starterLight/meshviewerwidget.cpp
+		../starterLight/meshviewerwidget.cpp \
+		../starterLight/utils.cpp \
+		../starterLight/dialoghistogramme.cpp
 QMAKE_TARGET  = starterLight
 DESTDIR       = 
 TARGET        = starterLight
@@ -144,7 +156,7 @@ TARGET        = starterLight
 first: all
 ####### Build rules
 
-$(TARGET): ui_mainwindow.h $(OBJECTS)  
+$(TARGET): ui_mainwindow.h ui_dialoghistogramme.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -158,6 +170,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri \
@@ -201,6 +214,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -222,6 +236,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../starterLight/starterLight.pro \
 		/usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5Charts.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Core.prl
@@ -237,6 +252,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri:
@@ -280,6 +296,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -301,6 +318,7 @@ Makefile: ../starterLight/starterLight.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf:
 ../starterLight/starterLight.pro:
 /usr/lib/x86_64-linux-gnu/libQt5OpenGL.prl:
+/usr/lib/x86_64-linux-gnu/libQt5Charts.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Core.prl:
@@ -319,9 +337,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../starterLight/mainwindow.h ../starterLight/meshviewerwidget.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../starterLight/main.cpp ../starterLight/mainwindow.cpp ../starterLight/meshviewerwidget.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../starterLight/mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../starterLight/mainwindow.h ../starterLight/meshviewerwidget.h ../starterLight/utils.h ../starterLight/dialoghistogramme.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../starterLight/main.cpp ../starterLight/mainwindow.cpp ../starterLight/meshviewerwidget.cpp ../starterLight/utils.cpp ../starterLight/dialoghistogramme.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../starterLight/mainwindow.ui ../starterLight/dialoghistogramme.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -353,9 +371,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_meshviewerwidget.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_meshviewerwidget.cpp moc_dialoghistogramme.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_meshviewerwidget.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_meshviewerwidget.cpp moc_dialoghistogramme.cpp
 moc_mainwindow.cpp: ../OpenMesh/inc/OpenMesh/Core/IO/MeshIO.hh \
 		../OpenMesh/inc/OpenMesh/Core/System/config.h \
 		../OpenMesh/inc/OpenMesh/Core/System/compiler.hh \
@@ -429,10 +447,13 @@ moc_mainwindow.cpp: ../OpenMesh/inc/OpenMesh/Core/IO/MeshIO.hh \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/PolyMeshT.cc \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/LoopSchemeMaskT.hh \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/TriMeshT.cc \
+		../starterLight/utils.h \
+		../starterLight/dialoghistogramme.h \
+		ui_dialoghistogramme.h \
 		../starterLight/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/mainwindow.h -o moc_mainwindow.cpp
 
 moc_meshviewerwidget.cpp: ../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT.hh \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/Vector11T.hh \
@@ -443,13 +464,19 @@ moc_meshviewerwidget.cpp: ../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT.hh \
 		../starterLight/meshviewerwidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/meshviewerwidget.h -o moc_meshviewerwidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/meshviewerwidget.h -o moc_meshviewerwidget.cpp
+
+moc_dialoghistogramme.cpp: ui_dialoghistogramme.h \
+		../starterLight/dialoghistogramme.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/brok/Bureau/PGAI/PGAI/tp1/starterLight -I/home/brok/Bureau/PGAI/PGAI/tp1/OpenMesh/inc -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../starterLight/dialoghistogramme.h -o moc_dialoghistogramme.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_mainwindow.h
+compiler_uic_make_all: ui_mainwindow.h ui_dialoghistogramme.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_mainwindow.h
+	-$(DEL_FILE) ui_mainwindow.h ui_dialoghistogramme.h
 ui_mainwindow.h: ../starterLight/mainwindow.ui \
 		/usr/lib/qt5/bin/uic \
 		../starterLight/meshviewerwidget.h \
@@ -460,6 +487,11 @@ ui_mainwindow.h: ../starterLight/mainwindow.ui \
 		../OpenMesh/inc/OpenMesh/Core/System/OpenMeshDLLMacros.hh \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT_inc.hh
 	/usr/lib/qt5/bin/uic ../starterLight/mainwindow.ui -o ui_mainwindow.h
+
+ui_dialoghistogramme.h: ../starterLight/dialoghistogramme.ui \
+		/usr/lib/qt5/bin/uic \
+		/usr/include/x86_64-linux-gnu/qt5/QtCharts
+	/usr/lib/qt5/bin/uic ../starterLight/dialoghistogramme.ui -o ui_dialoghistogramme.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -544,7 +576,10 @@ main.o: ../starterLight/main.cpp ../starterLight/mainwindow.h \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/MathDefs.hh \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/PolyMeshT.cc \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/LoopSchemeMaskT.hh \
-		../OpenMesh/inc/OpenMesh/Core/Mesh/TriMeshT.cc
+		../OpenMesh/inc/OpenMesh/Core/Mesh/TriMeshT.cc \
+		../starterLight/utils.h \
+		../starterLight/dialoghistogramme.h \
+		ui_dialoghistogramme.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../starterLight/main.cpp
 
 mainwindow.o: ../starterLight/mainwindow.cpp ../starterLight/mainwindow.h \
@@ -621,7 +656,11 @@ mainwindow.o: ../starterLight/mainwindow.cpp ../starterLight/mainwindow.h \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/PolyMeshT.cc \
 		../OpenMesh/inc/OpenMesh/Core/Geometry/LoopSchemeMaskT.hh \
 		../OpenMesh/inc/OpenMesh/Core/Mesh/TriMeshT.cc \
-		ui_mainwindow.h
+		../starterLight/utils.h \
+		../starterLight/dialoghistogramme.h \
+		ui_dialoghistogramme.h \
+		ui_mainwindow.h \
+		../starterLight/meshviewerwidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../starterLight/mainwindow.cpp
 
 meshviewerwidget.o: ../starterLight/meshviewerwidget.cpp ../starterLight/meshviewerwidget.h \
@@ -633,17 +672,36 @@ meshviewerwidget.o: ../starterLight/meshviewerwidget.cpp ../starterLight/meshvie
 		../OpenMesh/inc/OpenMesh/Core/Geometry/VectorT_inc.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o meshviewerwidget.o ../starterLight/meshviewerwidget.cpp
 
+utils.o: ../starterLight/utils.cpp ../starterLight/utils.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o ../starterLight/utils.cpp
+
+dialoghistogramme.o: ../starterLight/dialoghistogramme.cpp ../starterLight/dialoghistogramme.h \
+		ui_dialoghistogramme.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o dialoghistogramme.o ../starterLight/dialoghistogramme.cpp
+
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
 moc_meshviewerwidget.o: moc_meshviewerwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_meshviewerwidget.o moc_meshviewerwidget.cpp
 
+moc_dialoghistogramme.o: moc_dialoghistogramme.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_dialoghistogramme.o moc_dialoghistogramme.cpp
+
 ####### Install
 
-install:  FORCE
+install_target: first FORCE
+	@test -d $(INSTALL_ROOT)/usr/lib/x86_64-linux-gnu/qt5/examples/charts/barchart || mkdir -p $(INSTALL_ROOT)/usr/lib/x86_64-linux-gnu/qt5/examples/charts/barchart
+	-$(QINSTALL_PROGRAM) $(QMAKE_TARGET) $(INSTALL_ROOT)/usr/lib/x86_64-linux-gnu/qt5/examples/charts/barchart/$(QMAKE_TARGET)
 
-uninstall:  FORCE
+uninstall_target: FORCE
+	-$(DEL_FILE) $(INSTALL_ROOT)/usr/lib/x86_64-linux-gnu/qt5/examples/charts/barchart/$(QMAKE_TARGET)
+	-$(DEL_DIR) $(INSTALL_ROOT)/usr/lib/x86_64-linux-gnu/qt5/examples/charts/barchart/ 
+
+
+install: install_target  FORCE
+
+uninstall: uninstall_target  FORCE
 
 FORCE:
 
