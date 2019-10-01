@@ -48,7 +48,7 @@ public:
     void H_Curv(MyMesh* _mesh);
     void K_Curv(MyMesh* _mesh);
     void Bounding_box(MyMesh* _mesh);
-
+    void delete_bound(MyMesh* _mesh);
     // New
     MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
     void frequence_aire_triangles(MyMesh *_mesh);
@@ -69,7 +69,8 @@ private slots:
 private:
 
     bool modevoisinage;
-
+    MyMesh::VertexHandle sommets[8];
+    MyMesh::VertexHandle barycentre;
     MyMesh mesh;
 
     int vertexSelection;

@@ -605,11 +605,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool checked = true;
 void MainWindow::on_pushButton_clicked()
 {
-    Bounding_box(&mesh);
+    if (checked)
+        Bounding_box(&mesh);
+    else{
+        delete_bound(&mesh);
+    }
+    checked = !checked;
 }
-
 // exemple pour construire un mesh face par face
 void MainWindow::Bounding_box(MyMesh* _mesh)
 {
@@ -656,21 +661,21 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
 
     //on recupere le mesh global auquel nous ajouterons les sommets de la bound box
     MyMesh *mesh = _mesh;
-    MyMesh::VertexHandle sommets[8];
-    MyMesh::VertexHandle barycentre;
 
-    sommets[0] = mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmin));
-    sommets[1] = mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmax));
-    sommets[2] = mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmin));
-    sommets[3] = mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmax));
-    sommets[4] = mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmin));
-    sommets[5] = mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmax));
-    sommets[6] = mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmin));
-    sommets[7] = mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmax));
-    barycentre = mesh->add_vertex(tmpBary);
+    sommets[0] = _mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmin));
+    sommets[1] = _mesh->add_vertex(MyMesh::Point(Xmin, Ymin, Zmax));
+    sommets[2] = _mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmin));
+    sommets[3] = _mesh->add_vertex(MyMesh::Point(Xmin, Ymax, Zmax));
+    sommets[4] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmin));
+    sommets[5] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymin, Zmax));
+    sommets[6] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmin));
+    sommets[7] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmax));
+    barycentre = _mesh->add_vertex(tmpBary);
+
+    _mesh->update_normals();
 
     // initialisation des couleurs et épaisseurs (sommets et arêtes) du mesh
-    resetAllColorsAndThickness(mesh);
+    resetAllColorsAndThickness(_mesh);
 
     //on agrandis les points de la boundbox et on les met en rouge pour qu'ils soient plus visiblent
     for(int i = 0 ; i <  8; i++){
@@ -681,6 +686,28 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
     _mesh->set_color(barycentre, MyMesh::Color(0, 255, 0));
 
     // on affiche le maillage
-    displayMesh(mesh);
+    displayMesh(_mesh);
 
+}
+
+void MainWindow::delete_bound(MyMesh *_mesh)
+{
+    MyMesh *mesh = _mesh;
+
+    _mesh->request_vertex_status();
+    _mesh->delete_vertex(sommets[0], false);
+    _mesh->delete_vertex(sommets[1], false);
+    _mesh->delete_vertex(sommets[2], false);
+    _mesh->delete_vertex(sommets[3], false);
+    _mesh->delete_vertex(sommets[4], false);
+    _mesh->delete_vertex(sommets[5], false);
+    _mesh->delete_vertex(sommets[6], false);
+    _mesh->delete_vertex(sommets[7], false);
+    _mesh->delete_vertex(barycentre, false);
+    _mesh->garbage_collection();
+    _mesh->update_normals();
+
+    displayMesh(_mesh);
+
+    qDebug() << "Boundbox deleted";
 }
