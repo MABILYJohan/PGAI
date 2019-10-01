@@ -26,6 +26,7 @@ DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees, vecto
 
     for (unsigned i=0; i<_donnees.size(); i++)
     {
+        //qDebug() << "labels[" << i << "] = " << labels[i] ;
         sets[i] = new QBarSet(labels[i]);
         *sets[i] << donnees[i];
         series->append(sets[i]);

@@ -192,15 +192,14 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         displayMesh(_mesh);
     }
 
-    vector<char*> labels(10, "a");
+    vector<char[20]> labels(10);
+    vector<char*> l(labels.size());
     for (int i=0; i<(int)nbTriangles.size(); i++)
     {
-        char truc[20];
-        sprintf(truc, "%d-%d%c", i*10, (i+1)*10, '%');
-        labels[i] = truc;
-        //qDebug() << "labels[" << i << "] = " << labels[i] ;
+        sprintf(labels[i], "%d-%d%c", i*10, (i+1)*10, '%');
+        l[i] = labels[i];
     }
-    test_histogramme(_mesh, nbTriangles, labels);
+    test_histogramme(_mesh, nbTriangles, l);
 }
 
 /*-------------------------------------------------------------------------
@@ -387,7 +386,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     */
     // TEST FREQUENCE AIRE TRIANGLES
-    //frequence_aire_triangles(&mesh);
+    frequence_aire_triangles(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
