@@ -378,7 +378,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
 
     // TEST AIRE TOTALE
-    float aireTotale = aire_maillage(&mesh);
+    float aireTotale = aire_maillage(&mesh);0
     qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
