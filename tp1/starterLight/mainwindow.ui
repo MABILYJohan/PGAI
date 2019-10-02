@@ -59,6 +59,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Vérification maillage</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="pushButton_H">
          <property name="text">
           <string>Courbure Moyenne</string>

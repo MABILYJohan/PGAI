@@ -2,6 +2,7 @@
 // TP3 MGM
 
 #include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <vector>
 #include <cmath>
@@ -130,6 +131,63 @@ void MainWindow::test_histogramme(MyMesh *_mesh, vector<int> v, vector<char*> la
     else {
         ;
     }
+}
+
+void MainWindow::verif_face_N(MyMesh *_mesh)
+{
+    int iter = 0;
+    bool FaceN = true;
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        for(MyMesh::FaceFaceIter curFace = _mesh->ff_iter(*f_it); curFace.is_valid(); curFace++) {
+            iter ++;
+        }
+        if(iter = 0){
+            FaceN = false;
+            qDebug() << "Un face n'a pas de face voisine";
+            break;
+        }
+        iter = 0;
+    }
+    if (FaceN)
+        qDebug() << "Toutes les faces ont au moins une face voisine";
+}
+
+void MainWindow::verif_vert_N(MyMesh *_mesh)
+{//TODO
+    bool vertN = true;
+    for (MyMesh::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it)
+    {
+        if (mesh.valence(*v_it) == 0){
+            vertN = false;
+            qDebug() << "Un vertex n'a pas de voisin";
+            break;
+        }
+    }
+
+    if(vertN)
+        qDebug() << "Tout les vertex ont des voisins";
+}
+
+void MainWindow::verif_triangle(MyMesh *_mesh)
+{
+    int iter = 0;
+    bool isTri = true;
+    for (MyMesh::FaceIter f_it=mesh.faces_begin(); f_it!=mesh.faces_end(); ++f_it)
+    {
+        for(MyMesh::FaceVertexIter curVer = _mesh->fv_iter(*f_it); curVer.is_valid(); curVer++) {
+            iter ++;
+        }
+        if (iter != 3){
+            isTri = false;
+            qDebug() << "Le maillage ne contient pas que des triangles";
+            break;
+        }
+        iter = 0;
+    }
+
+    if(isTri)
+        qDebug() << "Le maillage ne possede que des faces triangulaires";
 }
 
 void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
@@ -735,4 +793,11 @@ void MainWindow::delete_bound(MyMesh *_mesh)
     displayMesh(_mesh);
 
     qDebug() << "Boundbox deleted";
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    verif_triangle(&mesh);
+    verif_face_N(&mesh);
+    verif_vert_N(&mesh);
 }

@@ -35,6 +35,7 @@ public:
     QWidget *widget_2;
     QVBoxLayout *verticalLayout;
     QPushButton *pushButton_chargement;
+    QPushButton *pushButton_2;
     QPushButton *pushButton_H;
     QPushButton *pushButton_K;
     QPushButton *pushButton;
@@ -74,6 +75,11 @@ public:
         pushButton_chargement->setMinimumSize(QSize(200, 0));
 
         verticalLayout->addWidget(pushButton_chargement);
+
+        pushButton_2 = new QPushButton(widget_2);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+
+        verticalLayout->addWidget(pushButton_2);
 
         pushButton_H = new QPushButton(widget_2);
         pushButton_H->setObjectName(QStringLiteral("pushButton_H"));
@@ -133,6 +139,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
         pushButton_chargement->setText(QApplication::translate("MainWindow", "Charger OBJ", Q_NULLPTR));
+        pushButton_2->setText(QApplication::translate("MainWindow", "V\303\251rification maillage", Q_NULLPTR));
         pushButton_H->setText(QApplication::translate("MainWindow", "Courbure Moyenne", Q_NULLPTR));
         pushButton_K->setText(QApplication::translate("MainWindow", "Courbure Gaussienne", Q_NULLPTR));
         pushButton->setText(QApplication::translate("MainWindow", "Boite englobante", Q_NULLPTR));

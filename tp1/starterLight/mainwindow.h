@@ -60,7 +60,10 @@ public:
     float aire_maillage(MyMesh *_mesh);
     void deviation_normales(MyMesh *_mesh);
     void test_histogramme(MyMesh *_mesh, vector<int> v, vector<char *> labels);
-
+    void verif_face_N(MyMesh *_mesh);
+    void verif_vert_N(MyMesh *_mesh);
+    void verif_edge_face(MyMesh *_mesh);
+    void verif_triangle(MyMesh *_mesh);
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 
@@ -72,6 +75,8 @@ private slots:
     void on_pushButton_K_clicked();
 
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
+
 private:
 
     bool modevoisinage;
