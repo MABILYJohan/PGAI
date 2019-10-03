@@ -14,50 +14,67 @@ QT_CHARTS_USE_NAMESPACE
 
 using namespace std;
 
-DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees, vector<char*> labels) :
+DialogHistogramme::DialogHistogramme(QWidget *parent, vector<int> donnees, vector<char*> labels,
+                                     char *labelAxe, char *title) :
     QDialog(parent)
 {
     setupUi(this);
 
     this->_donnees = donnees;
 
-    vector<QBarSet*> sets (donnees.size());
-    QBarSeries *series = new QBarSeries();
-
+    //vector<QBarSet*> sets (donnees.size());
+    QBarSet *mySet = new QBarSet("catégories");
     for (unsigned i=0; i<_donnees.size(); i++)
     {
-        //qDebug() << "labels[" << i << "] = " << labels[i] ;
-        sets[i] = new QBarSet(labels[i]);
-        *sets[i] << donnees[i];
-        series->append(sets[i]);
+        if (_donnees[i] > 0)
+            *mySet << _donnees[i];
     }
+    QBarSeries *series = new QBarSeries();
+    series->append(mySet);
+
+//    for (unsigned i=0; i<_donnees.size(); i++)
+//    {
+//        //qDebug() << "labels[" << i << "] = " << labels[i] ;
+//        sets[i] = new QBarSet(labels[i]);
+//        *sets[i] << donnees[i];
+//        series->append(sets[i]);
+//    }
 
     QChart *chart = new QChart();
     chart->addSeries(series);
-    chart->setTitle("histogramme");
+    chart->setTitle(title);
 
-
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    /*
-    QBarCategoryAxis *axisY = new QBarCategoryAxis();
-    axisY->setMin("0");
-    axisY->setMax("100");
     QStringList categories;
-    for (unsigned i=0; i<_donnees.size(); i++)
+    for (unsigned i=0; i<labels.size(); i++)
     {
-        char truc[20];
-        sprintf(truc, "%d ", i*10);
-        categories << truc;
+        if (_donnees[i] > 0)
+        categories << labels[i];
     }
-    axisY->append(categories);
-    */
-
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    //qDebug() << "labelAxe = " << labelAxe;
+    axisX->setTitleText(labelAxe);
     chart->createDefaultAxes();
     chart->setAxisX(axisX, series);
-    //chart->setAxisY(axisY);
 
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignBottom);
+
+//    /*
+//    QBarCategoryAxis *axisY = new QBarCategoryAxis();
+//    axisY->setMin("0");
+//    axisY->setMax("100");
+//    QStringList categories;
+//    for (unsigned i=0; i<_donnees.size(); i++)
+//    {
+//        char truc[20];
+//        sprintf(truc, "%d ", i*10);
+//        categories << truc;
+//    }
+//    axisY->append(categories);
+//    */
+
+
+    chart->legend()->setVisible(false);
+    //chart->legend()->setAlignment(Qt::AlignBottom);
 
     _myQChartView->setChart(chart);
     _myQChartView->setRenderHint(QPainter::Antialiasing);

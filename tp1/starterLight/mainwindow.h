@@ -59,7 +59,7 @@ public:
     void frequence_aire_triangles(MyMesh *_mesh);
     float aire_maillage(MyMesh *_mesh);
     void deviation_normales(MyMesh *_mesh);
-    void histogramme_pourcentages(MyMesh *_mesh, vector<int> v, int indices);
+    void display_my_histogramme(MyMesh *_mesh, vector<int> v, char *title, char *labelAxe, char *valType);
     void angles_diedres(MyMesh *_mesh);
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);

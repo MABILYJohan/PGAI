@@ -125,7 +125,8 @@ void MainWindow::angles_diedres(MyMesh *_mesh)
     {
         qDebug() << angles[i] << " aires de " << i*10 << " à " << (i+1)*10 << " degrés";
     }
-    histogramme_pourcentages(_mesh, angles, 36);
+    display_my_histogramme(_mesh, angles,
+                           "Répartition angles dièdres", "nombre de sommets par angles", "deg");
 }
 
 float MainWindow::aire_maillage(MyMesh *_mesh)
@@ -139,18 +140,19 @@ float MainWindow::aire_maillage(MyMesh *_mesh)
     return aireTotale;
 }
 
-void MainWindow::histogramme_pourcentages(MyMesh *_mesh, vector<int> v, int indices)
+void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe, char *valType)
 {
+    int indices = (int)v.size();
     // AFFICHAGE
     vector<char[20]> labels(indices);
     vector<char*> l(labels.size());
     for (int i=0; i<(int)v.size(); i++)
     {
-        sprintf(labels[i], "%d-%d%c", i*10, (i+1)*10, '%');
+        sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
         l[i] = labels[i];
     }
 
-    DialogHistogramme dlh(nullptr, v, l);
+    DialogHistogramme dlh(nullptr, v, l, labelAxe, title);
     if (dlh.exec()) {
         ;
     }
@@ -219,7 +221,8 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         displayMesh(_mesh);
     }
 
-    histogramme_pourcentages(_mesh, nbTriangles, 10);
+    display_my_histogramme(_mesh, nbTriangles, "Fréquence des aires pour chaque triangle",
+                           "pourcentages de l'aire du triangle d'aire maximum", "%");
 }
 
 /*-------------------------------------------------------------------------
@@ -264,7 +267,7 @@ void MainWindow::deviation_normales(MyMesh *_mesh)
         }
         maxAngle = Utils::RadToDeg(maxAngle);
         //qDebug() << "déviation max au sommet " << vh.idx() << " = " << maxAngle << "degrés";
-        _mesh->data(vh).thickness = 8;
+        _mesh->data(vh).thickness = 15;
         _mesh->set_color(vh, MyMesh::Color(0, 180-maxAngle, 0));
     }
     displayMesh(_mesh);
@@ -401,10 +404,13 @@ void MainWindow::on_pushButton_angleArea_clicked()
     float aireTotale = aire_maillage(&mesh);0
     qDebug() << "aire totale" << aireTotale;
 
-    // TEST DEVIATIONS NORMALES
-    deviation_normales(&mesh);
 
     */
+
+
+    // TEST DEVIATIONS NORMALES
+    //deviation_normales(&mesh);
+
     // TEST FREQUENCE AIRE TRIANGLES
     //frequence_aire_triangles(&mesh);
 
