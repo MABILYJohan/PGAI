@@ -54,6 +54,8 @@ public:
     void K_Curv(MyMesh* _mesh);
     void Bounding_box(MyMesh* _mesh);
     void delete_bound(MyMesh* _mesh);
+    // fonctions perso
+    float calculateCurveOnVertex(MyMesh* _mesh, int vertexID);
     // New
     MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
     void frequence_aire_triangles(MyMesh *_mesh);
