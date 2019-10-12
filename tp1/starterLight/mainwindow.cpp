@@ -102,6 +102,30 @@ float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
     return area / 3;
 }
 
+std::vector<int> MainWindow::liste_valence_mesh(MyMesh* _mesh)
+{
+    MyMesh::VertexIter vIterator, vBegin, vEnd;
+    std::vector<int> list_valence;
+    vBegin = _mesh->vertices_begin();
+    vEnd = _mesh->vertices_end();
+    int maxvalence=0;
+
+    for (vIterator = vBegin; vIterator != vEnd; ++vIterator) {
+        list_valence.push_back(_mesh->valence(vIterator.handle()));
+        if (_mesh->valence(vIterator.handle()) > maxvalence) maxvalence=_mesh->valence(vIterator.handle());
+    }
+
+    std::vector<int> hist_valence(maxvalence,0);
+    for (int i=0; i<list_valence.size(); i++) hist_valence[list_valence[i]]++;
+    qDebug() << list_valence;
+
+    display_my_histogramme(_mesh, hist_valence,
+                           "Répartition des valences dans le maillage", "valence", "v");
+
+    return list_valence;
+}
+
+
 void MainWindow::angles_diedres(MyMesh *_mesh)
 {
     vector<int> angles(36);
@@ -136,26 +160,7 @@ float MainWindow::aire_maillage(MyMesh *_mesh)
     return aireTotale;
 }
 
-void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe, char *valType)
-{
-    int indices = (int)v.size();
-    // AFFICHAGE
-    vector<char[20]> labels(indices);
-    vector<char*> l(labels.size());
-    for (int i=0; i<(int)v.size(); i++)
-    {
-        sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
-        l[i] = labels[i];
-    }
 
-    DialogHistogramme dlh(nullptr, v, l, labelAxe, title);
-    if (dlh.exec()) {
-        ;
-    }
-    else {
-        ;
-    }
-}
 
 void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
 {
@@ -355,9 +360,33 @@ void MainWindow::K_Curv(MyMesh* _mesh)
     }
     qDebug() << "</" << __FUNCTION__ << ">";
 }
-/* **** fin de la partie à compléter **** */
 
 
+void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe, char *valType)
+{
+    int indices = (int)v.size();
+    // AFFICHAGE
+    vector<char[20]> labels(indices);
+    vector<char*> l(labels.size());
+    for (int i=0; i<(int)v.size(); i++)
+    {
+        if (strcmp(valType, "v") == 0) {
+            sprintf(labels[i], "%d", i);
+        }
+        sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
+        l[i] = labels[i];
+    }
+
+    DialogHistogramme dlh(nullptr, v, l, labelAxe, title);
+    if (dlh.exec()) {
+        ;
+    }
+    else {
+        ;
+    }
+}
+
+/********************************** SIGNAUX *******************************************************/
 
 /* **** début de la partie boutons et IHM **** */
 void MainWindow::on_pushButton_H_clicked()
@@ -409,9 +438,12 @@ void MainWindow::on_pushButton_angleArea_clicked()
 
     */
 
+    // TEST Valence
+    liste_valence_mesh(&mesh);
+
     // TEST AIRE TOTALE
-    float aireTotale = aire_maillage(&mesh);
-    qDebug() << "aire totale" << aireTotale;
+    //float aireTotale = aire_maillage(&mesh);
+    //qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
     //deviation_normales(&mesh);

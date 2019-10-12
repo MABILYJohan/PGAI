@@ -63,6 +63,9 @@ public:
     void deviation_normales(MyMesh *_mesh);
     void display_my_histogramme(MyMesh *_mesh, vector<int> v, char *title, char *labelAxe, char *valType);
     void angles_diedres(MyMesh *_mesh);
+    std::vector<int> liste_valence_mesh(MyMesh* _mesh);
+    int valence_circulator(MyMesh* _mesh,VertexHandle vh, int valence, int n);
+    int valence_n_voisins(MyMesh* _mesh, int n);
 
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
