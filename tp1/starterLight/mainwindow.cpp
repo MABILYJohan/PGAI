@@ -123,7 +123,7 @@ std::vector<int> MainWindow::liste_valence_mesh(MyMesh* _mesh)
 
     std::vector<int> hist_valence(maxvalence,0);
     for (int i=0; i<list_valence.size(); i++) hist_valence[list_valence[i]]++;
-    qDebug() << list_valence;
+    //qDebug() << list_valence;
 
     display_my_histogramme(_mesh, hist_valence,
                            "Répartition des valences dans le maillage", "valence", "v");
@@ -432,12 +432,15 @@ void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title
     vector<char[20]> labels(indices);
     vector<char*> l(labels.size());
     for (int i=0; i<(int)v.size(); i++)
+//    for (int i=0; i<5; i++)
     {
         if (strcmp(valType, "v") == 0) {
             sprintf(labels[i], "%d", i);
         }
-        sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
-        l[i] = labels[i];
+        else {
+            sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
+            l[i] = labels[i];
+        }
     }
 
     DialogHistogramme dlh(nullptr, v, l, labelAxe, title);
@@ -503,8 +506,8 @@ void MainWindow::on_pushButton_angleArea_clicked()
     //liste_valence_mesh(&mesh);
 
     // TEST AIRE TOTALE
-    float aireTotale = aire_maillage(&mesh);
-    qDebug() << "aire totale" << aireTotale;
+    //float aireTotale = aire_maillage(&mesh);
+    //qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
     //deviation_normales(&mesh);
@@ -512,7 +515,7 @@ void MainWindow::on_pushButton_angleArea_clicked()
     // TEST FREQUENCE AIRE TRIANGLES
     //frequence_aire_triangles(&mesh);
 
-    //angles_diedres(&mesh);
+    angles_diedres(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
