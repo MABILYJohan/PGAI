@@ -13,6 +13,8 @@ using namespace std;
 
 float MainWindow::faceArea(MyMesh* _mesh, int faceID)
 {
+//    qDebug() << "<" << __FUNCTION__ << ">";
+
     FaceHandle face_h = FaceHandle(faceID);
 
     // on enregistre les points de la face dans un QVector
@@ -22,7 +24,10 @@ float MainWindow::faceArea(MyMesh* _mesh, int faceID)
         points.push_back(_mesh->point(vertex_h));
     }
 
-    return norm((points[1] - points[0]) % (points[2] - points[0])) / 2;
+    float aire = norm((points[1] - points[0]) % (points[2] - points[0])) / 2;
+//    qDebug() << "aire face" << faceID << " = " << aire ;
+//    qDebug() << "</" << __FUNCTION__ << ">";
+    return aire;
 }
 
 float MainWindow::angleFF(MyMesh* _mesh, int faceID0,  int faceID1, int vertID0, int vertID1)
@@ -492,16 +497,14 @@ void MainWindow::on_pushButton_angleArea_clicked()
     MyMesh::Point p = normale_sommet(&mesh, sommet);
     qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
-
-
     */
 
     // TEST Valence
-    liste_valence_mesh(&mesh);
+    //liste_valence_mesh(&mesh);
 
     // TEST AIRE TOTALE
-    //float aireTotale = aire_maillage(&mesh);
-    //qDebug() << "aire totale" << aireTotale;
+    float aireTotale = aire_maillage(&mesh);
+    qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
     //deviation_normales(&mesh);
