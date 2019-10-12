@@ -510,12 +510,12 @@ void MainWindow::on_pushButton_angleArea_clicked()
     //qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
-    //deviation_normales(&mesh);
+    deviation_normales(&mesh);
 
     // TEST FREQUENCE AIRE TRIANGLES
     //frequence_aire_triangles(&mesh);
 
-    angles_diedres(&mesh);
+    //angles_diedres(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
