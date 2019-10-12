@@ -25,36 +25,32 @@ float MainWindow::faceArea(MyMesh* _mesh, int faceID)
     return norm((points[1] - points[0]) % (points[2] - points[0])) / 2;
 }
 
-float MainWindow::angleFF(MyMesh* _mesh, int faceID0, int faceID1, int vertID0, int vertID1)
+float MainWindow::angleFF(MyMesh* _mesh, int faceID0,  int faceID1, int vertID0, int vertID1)
 {
-    /* **** à compléter ! **** */
+    // calcul des normales des faces que l'on normalise
+    FaceHandle fh1 = _mesh->face_handle(faceID0);
+    FaceHandle fh2 = _mesh->face_handle(faceID1);
+    MyMesh::Normal normal1 = _mesh->calc_face_normal(fh1);
+    MyMesh::Normal normal2 = _mesh->calc_face_normal(fh2);
+    normal1.normalize();
+    normal2.normalize();
 
-    //qDebug() << "<" << __FUNCTION__ << ">";
+    MyMesh::Point point1, point2;
+    point1 = _mesh->point(_mesh->vertex_handle(vertID0));
+    point2 = _mesh->point(_mesh->vertex_handle(vertID1));
 
-    FaceHandle fh0 = _mesh->face_handle(faceID0);
-    FaceHandle fh1 = _mesh->face_handle(faceID1);
-    MyMesh::Point vNFace0 = _mesh->calc_face_normal(fh0);
-    MyMesh::Point vNFace1 = _mesh->calc_face_normal(fh1);
+    // calcul du vecteur entre point 1 et 2
+    MyMesh::Normal vector_v1_v2 = point2 - point1;
 
-    vNFace0.normalize();
-    vNFace1.normalize();
+    // calcul de l'angle entre les deux normales des faces 1 et 2
+    float angle = acos(dot(normal1, normal2));
 
-    VertexHandle vh1 = _mesh->vertex_handle(vertID0);
-    VertexHandle vh2 = _mesh->vertex_handle(vertID1);
+    //qDebug() << "(" << faceID0 << ", " << faceID1 << ", " << vertID0 << ", " << vertID1 << ") : " << angle * 180 / PI << endl;
+    //qDebug() << dot(cross_product, vector_v1_v2) << endl;
 
-    float angle=0.f;
-    if ( ((vNFace0 % vNFace1) | (_mesh->point(vh2) - _mesh->point(vh1))) >=0)
-    {
-        //qDebug() << "\t+";
-        angle = acos( (vNFace0|vNFace1) );
-    }
-    else {
-        //qDebug() << "\t-";
-        angle = -acos( (vNFace0|vNFace1) );
-    }
-
-    //qDebug() << "</" << __FUNCTION__ << ">";
-    return angle;
+    // determiner le signe de l'angle
+    MyMesh::Normal cross_product = cross(normal1, normal2);
+    return dot(cross_product, vector_v1_v2) < 0 ? - angle : angle;
 }
 
 float MainWindow::angleEE(MyMesh* _mesh, int vertexID,  int faceID)
@@ -99,16 +95,59 @@ float MainWindow::angleEE(MyMesh* _mesh, int vertexID,  int faceID)
 
 float MainWindow::aire_barycentrique(MyMesh* _mesh, int vertID)
 {
-    float sommeA = 0.f;
     VertexHandle vh = _mesh->vertex_handle(vertID);
-    for (MyMesh::VertexFaceCWIter vf_it = _mesh->vf_cwiter(vh); vf_it.is_valid(); vf_it++)
-    {
-        FaceHandle fh = *vf_it;
-        sommeA += faceArea(_mesh, fh.idx());
+    float area = 0;
+    for(MyMesh::VertexFaceIter vfit = _mesh->vf_iter(vh); vfit.is_valid(); vfit++){
+        area += faceArea(_mesh,(*vfit).idx());
+    }
+    return area / 3;
+}
+
+std::vector<int> MainWindow::liste_valence_mesh(MyMesh* _mesh)
+{
+    MyMesh::VertexIter vIterator, vBegin, vEnd;
+    std::vector<int> list_valence;
+    vBegin = _mesh->vertices_begin();
+    vEnd = _mesh->vertices_end();
+    int maxvalence=0;
+
+    for (vIterator = vBegin; vIterator != vEnd; ++vIterator) {
+        list_valence.push_back(_mesh->valence(vIterator.handle()));
+        if (_mesh->valence(vIterator.handle()) > maxvalence) maxvalence=_mesh->valence(vIterator.handle());
     }
 
-    float aireB = (1.f/3.f) * sommeA;
-    return aireB;
+    std::vector<int> hist_valence(maxvalence,0);
+    for (int i=0; i<list_valence.size(); i++) hist_valence[list_valence[i]]++;
+    qDebug() << list_valence;
+
+    display_my_histogramme(_mesh, hist_valence,
+                           "Répartition des valences dans le maillage", "valence", "v");
+
+    return list_valence;
+}
+
+
+void MainWindow::angles_diedres(MyMesh *_mesh)
+{
+    vector<int> angles(36);
+
+    for (MyMesh::EdgeIter e_it=mesh.edges_begin(); e_it!=mesh.edges_end(); ++e_it)
+    {
+        EdgeHandle eh = *e_it;
+
+        float a = _mesh->calc_dihedral_angle(eh);
+        if (a<0)    a = a*(-1.f);
+        a = Utils::RadToDeg(a);
+        int j = (int)a/10;
+        angles[j]+=1;
+    }
+
+    for (int i=0; i<(int)angles.size(); i++)
+    {
+        qDebug() << angles[i] << " aires de " << i*10 << " à " << (i+1)*10 << " degrés";
+    }
+    display_my_histogramme(_mesh, angles,
+                           "Répartition angles dièdres", "nombre de sommets par angles", "deg");
 }
 
 float MainWindow::aire_maillage(MyMesh *_mesh)
@@ -122,16 +161,7 @@ float MainWindow::aire_maillage(MyMesh *_mesh)
     return aireTotale;
 }
 
-void MainWindow::test_histogramme(MyMesh *_mesh, vector<int> v, vector<char*> labels)
-{
-    DialogHistogramme dlh(nullptr, v, labels);
-    if (dlh.exec()) {
-        ;
-    }
-    else {
-        ;
-    }
-}
+
 
 void MainWindow::verif_face_N(MyMesh *_mesh)
 {
@@ -192,7 +222,7 @@ void MainWindow::verif_triangle(MyMesh *_mesh)
 
 void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
 {
-    bool flagColor=false;
+    bool flagColor=true;
     float minAire=DBL_MAX;
     float maxAire = 0.f;
     FaceHandle faceMin, faceMax;
@@ -250,14 +280,8 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
         displayMesh(_mesh);
     }
 
-    vector<char[20]> labels(10);
-    vector<char*> l(labels.size());
-    for (int i=0; i<(int)nbTriangles.size(); i++)
-    {
-        sprintf(labels[i], "%d-%d%c", i*10, (i+1)*10, '%');
-        l[i] = labels[i];
-    }
-    test_histogramme(_mesh, nbTriangles, l);
+    display_my_histogramme(_mesh, nbTriangles, "Fréquence des aires pour chaque triangle",
+                           "pourcentages de l'aire du triangle d'aire maximum", "%");
 }
 
 /*-------------------------------------------------------------------------
@@ -300,63 +324,73 @@ void MainWindow::deviation_normales(MyMesh *_mesh)
                 maxAngle = angles[i];
             }
         }
-        maxAngle = Utils::RadToDeg(maxAngle);
-        //qDebug() << "déviation max au sommet " << vh.idx() << " = " << maxAngle << "degrés";
-        _mesh->data(vh).thickness = 8;
-        _mesh->set_color(vh, MyMesh::Color(0, 180-maxAngle, 0));
+        float angleRad = Utils::RadToDeg(maxAngle);
+        //qDebug() << "déviation max au sommet " << vh.idx() << " = " << angleRad << "degrés";
+
+        //_mesh->data(vh).thickness = 25;
+        //_mesh->set_color(vh, MyMesh::Color(maxAngle+75, 0, maxAngle+75));
+        _mesh->data(vh).value = (float)maxAngle;
+
     }
-    displayMesh(_mesh);
+    displayMesh(_mesh, true);
     //qDebug() << "</" << __FUNCTION__ << ">";
+}
+
+
+float MainWindow::calculateCurveOnVertex(MyMesh* _mesh, int vertexID)
+{
+    VertexHandle vertex = VertexHandle(vertexID);
+    float sum = 0.0;
+
+    // on stocke toutes les faces adjacentes au sommet
+    std::vector<int> faces;
+    for(MyMesh::VertexFaceCWIter vfit = _mesh->vf_cwiter(vertex); vfit.is_valid(); vfit++){
+        faces.push_back((*vfit).idx());
+    }
+
+    for(int i = 0; i < faces.size(); i++) {
+        // on compare toutes les paires de face
+        int face0 = faces[i];
+        int face1 = faces[(i+1) % faces.size()];
+
+        // on cherche l'arête commune entre les deux faces
+        int edgeCommune;
+        for(MyMesh::FaceEdgeIter feit0 = _mesh->fe_iter(FaceHandle(face0)); feit0.is_valid(); feit0++) {
+            for(MyMesh::FaceEdgeIter feit1 = _mesh->fe_iter(FaceHandle(face1)); feit1.is_valid(); feit1++) {
+                if((*feit0).idx() == (*feit1).idx()) {
+                    edgeCommune = (*feit0).idx();
+                    break;
+                }
+            }
+        }
+
+        // on cherche le sommet opposé sur la même arête
+        int vertexOppose;
+        for(MyMesh::VertexVertexIter vvit = _mesh->vv_iter(vertex); vvit.is_valid(); vvit++) {
+            for(MyMesh::VertexEdgeIter veit = _mesh->ve_iter(vvit); veit.is_valid(); veit++) {
+                if((*veit).idx() == edgeCommune) {
+                    vertexOppose = (*vvit).idx();
+                    break;
+                }
+            }
+        }
+
+        // on a tout trouvé, on ajoute l'angle entre les deux faces que multiplie
+        // la longueur de l'arête commune
+        sum += (angleFF(_mesh, face0, face1, vertexID, vertexOppose) * _mesh->calc_edge_length(EdgeHandle(edgeCommune)));
+    }
+
+    return sum;
 }
 
 void MainWindow::H_Curv(MyMesh* _mesh)
 {
-    /* **** à compléter ! **** */
-
-    qDebug() << "<" << __FUNCTION__ << ">";
-    for (MyMesh::VertexIter curVert = _mesh->vertices_begin(); curVert != _mesh->vertices_end(); curVert++)
-    {
-        VertexHandle vh0 = *curVert;
-        float a = 1 / ( 4 * aire_barycentrique(_mesh, vh0.idx()) );
-
-        float somme=0.f;
-        for (MyMesh::VertexEdgeCWIter ve_it = _mesh->ve_cwiter(vh0); ve_it.is_valid(); ve_it++)
-        {
-            EdgeHandle eh = *ve_it;
-            float edgeLength = _mesh->calc_edge_length(eh);
-
-            MyMesh::HalfedgeHandle hehc1 = _mesh->halfedge_handle(eh, 0);
-            MyMesh::HalfedgeHandle hehc2 = _mesh->halfedge_handle(eh, 1);
-            VertexHandle vhhe1 = _mesh->to_vertex_handle(hehc1);
-            VertexHandle vhhe2 = _mesh->to_vertex_handle(hehc2);
-            VertexHandle vh1;
-            if (vhhe1 != vh0)
-                vh1 = vhhe1;
-            else
-                vh1 = vhhe2;
-
-            FaceHandle fh0;
-            FaceHandle fh1;
-            if (vh1 == vhhe1) {
-                fh0 = _mesh->face_handle(hehc1);
-                fh1 = _mesh->face_handle(hehc2);
-            }
-            else {
-                fh0 = _mesh->face_handle(hehc2);
-                fh1 = _mesh->face_handle(hehc1);
-            }
-
-            float gamma = angleFF(_mesh, fh0.idx(), fh1.idx(), vh0.idx(), vh1.idx());
-
-            somme += gamma*edgeLength;
-            //qDebug() << "vh0:" << vh0.idx() << "vh1:" << vh1.idx();
-        }
-        //qDebug() << "";
-        float H = a*somme;
-        _mesh->data(vh0).value = H;
+    // courbure moyenne
+    for (MyMesh::VertexIter curVert = _mesh->vertices_begin(); curVert != _mesh->vertices_end(); curVert++) {
+        float aireBar = aire_barycentrique(_mesh, (*curVert).idx());
+        float H = calculateCurveOnVertex(_mesh, (*curVert).idx()) / (4 * aireBar);
+        _mesh->data(*curVert).value = H;
     }
-    qDebug() << "</" << __FUNCTION__ << ">";
-
 }
 
 void MainWindow::K_Curv(MyMesh* _mesh)
@@ -384,9 +418,33 @@ void MainWindow::K_Curv(MyMesh* _mesh)
     }
     qDebug() << "</" << __FUNCTION__ << ">";
 }
-/* **** fin de la partie à compléter **** */
 
 
+void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe, char *valType)
+{
+    int indices = (int)v.size();
+    // AFFICHAGE
+    vector<char[20]> labels(indices);
+    vector<char*> l(labels.size());
+    for (int i=0; i<(int)v.size(); i++)
+    {
+        if (strcmp(valType, "v") == 0) {
+            sprintf(labels[i], "%d", i);
+        }
+        sprintf(labels[i], "%d-%d%s", i*10, (i+1)*10, valType);
+        l[i] = labels[i];
+    }
+
+    DialogHistogramme dlh(nullptr, v, l, labelAxe, title);
+    if (dlh.exec()) {
+        ;
+    }
+    else {
+        ;
+    }
+}
+
+/********************************** SIGNAUX *******************************************************/
 
 /* **** début de la partie boutons et IHM **** */
 void MainWindow::on_pushButton_H_clicked()
@@ -435,16 +493,23 @@ void MainWindow::on_pushButton_angleArea_clicked()
     qDebug() << "\nnormale du sommet " << sommet
             << " x" << p[0] << "  y" << p[1] << " z" << p[2] << endl;
 
-    // TEST AIRE TOTALE
-    float aireTotale = aire_maillage(&mesh);
-    qDebug() << "aire totale" << aireTotale;
-
-    // TEST DEVIATIONS NORMALES
-    deviation_normales(&mesh);
 
     */
+
+    // TEST Valence
+    liste_valence_mesh(&mesh);
+
+    // TEST AIRE TOTALE
+    //float aireTotale = aire_maillage(&mesh);
+    //qDebug() << "aire totale" << aireTotale;
+
+    // TEST DEVIATIONS NORMALES
+    //deviation_normales(&mesh);
+
     // TEST FREQUENCE AIRE TRIANGLES
-    frequence_aire_triangles(&mesh);
+    //frequence_aire_triangles(&mesh);
+
+    //angles_diedres(&mesh);
 }
 
 void MainWindow::on_pushButton_chargement_clicked()
@@ -738,7 +803,7 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
 
     qDebug() << "Barycentre : x :" << tmpBary[0] << " y : " << tmpBary[1] << " z : " << tmpBary[2];
     qDebug() << "Xmin : " << Xmin << " Ymin : " << Ymin << " Zmin : " << Zmin;
-    qDebug() << "Xmax : " << Xmax << " Ymax : " << Ymax << " Zmax : " << Zmax;
+    qDebug() << "Xmax : " << Xmax << " Ymax : " << Ymax << " Zmax : " << Zmax << endl;
 
     //on recupere le mesh global auquel nous ajouterons les sommets de la bound box
     MyMesh *mesh = _mesh;
@@ -753,8 +818,6 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
     sommets[7] = _mesh->add_vertex(MyMesh::Point(Xmax, Ymax, Zmax));
     barycentre = _mesh->add_vertex(tmpBary);
 
-    qDebug () << "Rayon de la sphere englobante : " << norm(_mesh->point(sommets[0]) - _mesh->point(barycentre)) << endl;
-
     _mesh->update_normals();
 
     // initialisation des couleurs et épaisseurs (sommets et arêtes) du mesh
@@ -762,7 +825,8 @@ void MainWindow::Bounding_box(MyMesh* _mesh)
 
     //on agrandis les points de la boundbox et on les met en rouge pour qu'ils soient plus visiblent
     for(int i = 0 ; i <  8; i++){
-        _mesh->data(sommets[i]).thickness = 3;
+        //_mesh->data(sommets[i]).thickness = 3;
+        _mesh->data(sommets[i]).thickness = 12;
         _mesh->set_color(sommets[i], MyMesh::Color(255, 0, 0));
     }
     _mesh->data(barycentre).thickness = 4;

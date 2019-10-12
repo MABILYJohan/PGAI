@@ -54,6 +54,8 @@ public:
     void K_Curv(MyMesh* _mesh);
     void Bounding_box(MyMesh* _mesh);
     void delete_bound(MyMesh* _mesh);
+    // fonctions perso
+    float calculateCurveOnVertex(MyMesh* _mesh, int vertexID);
     // New
     MyMesh::Point normale_sommet(MyMesh *_mesh, int vertexID);
     void frequence_aire_triangles(MyMesh *_mesh);
@@ -64,6 +66,12 @@ public:
     void verif_vert_N(MyMesh *_mesh);
     void verif_edge_face(MyMesh *_mesh);
     void verif_triangle(MyMesh *_mesh);
+    void display_my_histogramme(MyMesh *_mesh, vector<int> v, char *title, char *labelAxe, char *valType);
+    void angles_diedres(MyMesh *_mesh);
+    std::vector<int> liste_valence_mesh(MyMesh* _mesh);
+    int valence_circulator(MyMesh* _mesh,VertexHandle vh, int valence, int n);
+    int valence_n_voisins(MyMesh* _mesh, int n);
+
     void displayMesh(MyMesh *_mesh, bool isTemperatureMap = false, float mapRange = -1);
     void resetAllColorsAndThickness(MyMesh* _mesh);
 

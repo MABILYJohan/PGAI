@@ -20,7 +20,8 @@ private:
     vector<int> _donnees;
 
 public:
-    explicit DialogHistogramme(QWidget *parent, vector<int> _donnees, vector<char *> labels);
+    explicit DialogHistogramme(QWidget *parent, vector<int> _donnees, vector<char *> labels,
+                               char *labelAxe, char *title);
 
 };
 
