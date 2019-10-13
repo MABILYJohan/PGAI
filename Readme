@@ -2,3 +2,5 @@
 QtCharts (attention je sais pas ce qui différencie l'un de l'autre)
 	$ sudo apt install libqt5charts5 libqt5charts5-dev
 	$ sudo apt install qml-module-qtcharts
+   
+   test
