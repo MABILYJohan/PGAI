@@ -126,7 +126,9 @@ std::vector<int> MainWindow::liste_valence_mesh(MyMesh* _mesh)
     //qDebug() << list_valence;
 
     display_my_histogramme(_mesh, hist_valence,
-                           "Répartition des valences dans le maillage", "valence", "v");
+                           "Répartition des valences dans le maillage",
+                           "valence",
+                           "v", -1);
 
     return list_valence;
 }
@@ -152,7 +154,9 @@ void MainWindow::angles_diedres(MyMesh *_mesh)
         qDebug() << angles[i] << " aires de " << i*10 << " à " << (i+1)*10 << " degrés";
     }
     display_my_histogramme(_mesh, angles,
-                           "Répartition angles dièdres", "nombre de sommets par angles", "deg");
+                           "Répartition angles dièdres",
+                           "nombre de sommets par angles",
+                           "deg", -1);
 }
 
 float MainWindow::aire_maillage(MyMesh *_mesh)
@@ -286,7 +290,7 @@ void MainWindow::frequence_aire_triangles(MyMesh *_mesh)
     }
 
     display_my_histogramme(_mesh, nbTriangles, "Fréquence des aires pour chaque triangle",
-                           "pourcentages de l'aire du triangle d'aire maximum", "%");
+                           "pourcentages de l'aire du triangle d'aire maximum", "%", -1);
 }
 
 /*-------------------------------------------------------------------------
@@ -306,6 +310,7 @@ MyMesh::Point MainWindow::normale_sommet(MyMesh *_mesh, int vertexID)
 void MainWindow::deviation_normales(MyMesh *_mesh)
 {
     //qDebug() << "<" << __FUNCTION__ << ">";
+    vector<int> typesAngles(18, 0);
     float maxAngle = 0.f;
     for (MyMesh::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it)
     {
@@ -313,31 +318,43 @@ void MainWindow::deviation_normales(MyMesh *_mesh)
         MyMesh::Point normSommet = normale_sommet(_mesh, vh.idx());
         normSommet.normalize();
 
-        vector<float> angles;
+        vector<float> myAngles;
         for (MyMesh::VertexFaceIter vf_it = _mesh->vf_iter(vh); vf_it.is_valid(); vf_it++)
         {
             FaceHandle fh = *vf_it;
             MyMesh::Point nf = _mesh->calc_face_normal(fh);
             nf.normalize();
             maxAngle = acos( (normSommet | nf) );
-            angles.push_back(maxAngle);
+            myAngles.push_back(maxAngle);
         }
         maxAngle = 0.f;
-        for (unsigned i=0; i<angles.size(); i++)
+        for (unsigned i=0; i<myAngles.size(); i++)
         {
-            if (maxAngle <= angles[i]) {
-                maxAngle = angles[i];
+            if (maxAngle <= myAngles[i]) {
+                maxAngle = myAngles[i];
             }
         }
-        float angleRad = Utils::RadToDeg(maxAngle);
+        //float angleRad = Utils::RadToDeg(maxAngle);
         //qDebug() << "déviation max au sommet " << vh.idx() << " = " << angleRad << "degrés";
 
         //_mesh->data(vh).thickness = 25;
         //_mesh->set_color(vh, MyMesh::Color(maxAngle+75, 0, maxAngle+75));
         _mesh->data(vh).value = (float)maxAngle;
-
+        maxAngle = Utils::RadToDeg(maxAngle);
+        int j = (int)maxAngle/10;
+        typesAngles[j]+=1;
     }
     displayMesh(_mesh, true);
+    for (int i=0; i<(int)typesAngles.size(); i++)
+    {
+        qDebug() << typesAngles[i] << " aires de " << i*10 << " à " << (i+1)*10 << " degrés";
+    }
+    display_my_histogramme(_mesh, typesAngles,
+                           "Répartition déviations normales",
+                           "nombre de sommets par type d'angles",
+                           "deg",
+                           -1);
+
     //qDebug() << "</" << __FUNCTION__ << ">";
 }
 
@@ -425,14 +442,17 @@ void MainWindow::K_Curv(MyMesh* _mesh)
 }
 
 
-void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe, char *valType)
+void MainWindow::display_my_histogramme(MyMesh *_mesh, vector<int> v, char*title, char *labelAxe,
+                                        char *valType, int maxAffiche)
 {
     int indices = (int)v.size();
     // AFFICHAGE
-    vector<char[20]> labels(indices);
+    vector<char[20]> labels((unsigned)indices);
     vector<char*> l(labels.size());
     for (int i=0; i<(int)v.size(); i++)
-//    for (int i=0; i<5; i++)
+    if (maxAffiche > (int)v.size() || maxAffiche < 0)
+        maxAffiche = (int)v.size();
+    for (int i=0; i<maxAffiche; i++)
     {
         if (strcmp(valType, "v") == 0) {
             sprintf(labels[i], "%d", i);
@@ -510,10 +530,10 @@ void MainWindow::on_pushButton_angleArea_clicked()
     //qDebug() << "aire totale" << aireTotale;
 
     // TEST DEVIATIONS NORMALES
-    //deviation_normales(&mesh);
+    deviation_normales(&mesh);
 
     // TEST FREQUENCE AIRE TRIANGLES
-    frequence_aire_triangles(&mesh);
+    //frequence_aire_triangles(&mesh);
 
     //angles_diedres(&mesh);
 }

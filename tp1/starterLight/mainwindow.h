@@ -66,7 +66,7 @@ public:
     void verif_vert_N(MyMesh *_mesh);
     void verif_edge_face(MyMesh *_mesh);
     void verif_triangle(MyMesh *_mesh);
-    void display_my_histogramme(MyMesh *_mesh, vector<int> v, char *title, char *labelAxe, char *valType);
+    void display_my_histogramme(MyMesh *_mesh, vector<int> v, char *title, char *labelAxe, char *valType, int maxAffiche);
     void angles_diedres(MyMesh *_mesh);
     std::vector<int> liste_valence_mesh(MyMesh* _mesh);
     int valence_circulator(MyMesh* _mesh,VertexHandle vh, int valence, int n);
