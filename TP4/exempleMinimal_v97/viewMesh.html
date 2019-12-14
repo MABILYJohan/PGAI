@@ -109,7 +109,7 @@
 
 					//fichier source du maillage, SUZANNE.PLY, loader ply
 					var sourcePLY = 'data/stanford_bunny.ply'
-					console.log("viewMesh Ply : "+sourcePLY);
+					//console.log("viewMesh Ply : "+sourcePLY);
 
 					var loaderPLY = new THREE.PLYLoader();
 
@@ -212,6 +212,7 @@
 				if (myBool) {
 					myBool = false;
 					var i;
+					console.log("Tracé terminé \nPoints qui ont été stockés:");
 					for(i=0; i<myPoints.length; i++)
 					{
 						console.log("myPoints "+ i + ":"  + myPoints[i].x 
@@ -221,7 +222,7 @@
 				else {
 					myBool = true;
 					myPoints = new Array(); 
-					console.log("trace le polygone humain!");
+					console.log("tracer le polygone");
 				}
 			}
 
