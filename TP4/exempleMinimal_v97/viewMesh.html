@@ -108,7 +108,7 @@
 
 
 					//fichier source du maillage, SUZANNE.PLY, loader ply
-					var sourcePLY = 'data/stanford_bunny.ply'
+					var sourcePLY = 'data/suzanne.ply'
 					//console.log("viewMesh Ply : "+sourcePLY);
 
 					var loaderPLY = new THREE.PLYLoader();
@@ -126,7 +126,10 @@
 
 						geometryPLY.computeBoundingSphere();
 
-						var materialPLY = new THREE.MeshLambertMaterial({color: 0x443322 } );
+						var materialPLY = new THREE.MeshLambertMaterial({
+							color: 0x443322, 
+						    wireframe: true
+						} );
 
 						meshPLY = new THREE.Mesh( geometryPLY, materialPLY );
 							meshPLY.position.set( -centrePLY.x, -centrePLY.y, -centrePLY.z);
@@ -138,7 +141,6 @@
 						myLightPos.z = 1.1*geometryPLY.boundingBox.max.z;
 
 						scene.add( meshPLY );
-
 					});
 
 					//fichier source du maillage, STATUES.CTM, loader ctm
@@ -213,11 +215,41 @@
 					myBool = false;
 					var i;
 					console.log("Tracé terminé \nPoints qui ont été stockés:");
+					var material = new THREE.MeshStandardMaterial( { color : 0x00cc00 } );
+					var geometry = new THREE.Geometry();
+					var ptTmp;
 					for(i=0; i<myPoints.length; i++)
 					{
 						console.log("myPoints "+ i + ":"  + myPoints[i].x 
 							+ " " + myPoints[i].y + " "+ myPoints[i].z);
+						if(!geometry.vertices.includes(myPoints[i])){
+							geometry.vertices.push(myPoints[i]);
+							ptTmp += myPoints[i];
+						}
+
+
 					}
+					ptTmp /= geometry.vertices.length;
+					geometry.vertices.push(ptTmp);
+					// console.log(geometry.vertices);
+					var normal = new THREE.Vector3( 0, 1, 0 ); //optional
+					var color = new THREE.Color( 0xffaa00 ); //optional
+					var materialIndex = 0; //optional
+						
+					var nbV = geometry.vertices.length;
+					geometry.computeFlatVertexNormals();
+					for(var j=0; j < nbV; j++){
+						var face = new THREE.Face3( 
+							0, 
+							(j%(nbV-1))+1, 
+							(j%(nbV-1))+2, 
+							normal, 
+							color, 
+							materialIndex
+						);
+						geometry.faces.push( face );
+					}
+					scene.add( new THREE.Mesh( geometry, material ) );
 				}
 				else {
 					myBool = true;
@@ -238,6 +270,20 @@
 					var P = intersects[0].point;
 					if (myBool)
 					{
+						// var face = intersects[0].face;
+						// var material = new THREE.MeshStandardMaterial( { color : 0x00cc00 } );
+						// var geometry = new THREE.Geometry();
+						// console.log(intersects);
+						// geometry.vertices.push(meshPLY.geometry.vertices[face.a]);
+						// geometry.vertices.push(meshPLY.geometry.vertices[face.b]);
+						// geometry.vertices.push(meshPLY.geometry.vertices[face.c]);
+						// var normal = new THREE.Vector3( 0, 1, 0 ); //optional
+						// var color = new THREE.Color( 0xffaa00 ); //optional
+						// var materialIndex = 0; //optional
+						// var face2 = new THREE.Face3( 0, 1, 2, normal, color, materialIndex);
+						// meshPLY.geometry.faces.push( face2 );
+						// scene.add( new THREE.Mesh( meshPLY.geometry, material ) );
+						// console.log("vec1 : " + face.a + "vec2 : " + face.b + " vec3 : " + face.c)
 						console.log("intersection : "+ P.x + " " + P.y + " "+ P.z);
 						myPoints.push(P);
 					}
